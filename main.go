@@ -6,11 +6,14 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"text/template"
 	"time"
 )
 
 var tpl *template.Template
+
+const LEDGER_FILE = "test.txt"
 
 type TxData struct {
 	Date   string
@@ -38,7 +41,8 @@ func main() {
 			panic(err)
 		}
 		fmt.Println(r.Form)
-		if err := renderTx(w, r.Form); err != nil {
+		err := renderTx(w, r.Form)
+		if err != nil {
 			panic(err)
 		}
 	})
@@ -52,5 +56,16 @@ func renderTx(w io.Writer, params url.Values) (err error) {
 		Date:   time.Now().Format("2006/01/02"),
 		Amount: params.Get("amount"),
 	}
-	return tpl.ExecuteTemplate(w, name, data)
+	f, err := os.OpenFile(LEDGER_FILE, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	if err = tpl.ExecuteTemplate(f, name, data); err != nil {
+		return err
+	}
+	if err = tpl.ExecuteTemplate(w, name, data); err != nil {
+		return err
+	}
+	return nil
 }
