@@ -6,7 +6,13 @@
     <body>
         <h1>Ledger Quick Note</h1>
         <form action="/action" method="POST">
-            <label>Action: <input name="action" type="text"></label>
+            <label>Action: <select name="action">
+                {{ range .Templates }}
+                {{ if ne .Name "index.html" }}
+                <option value="{{ .Name }}">{{ .Name }}</option>
+                {{ end }}
+                {{ end }}
+                </select></label>
             <label>Amount: <input name="amount" type="number"></label>
             <input type="submit">
         </form>

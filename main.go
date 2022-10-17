@@ -22,7 +22,7 @@ type TxData struct {
 
 func init() {
 	var err error
-	tpl, err = template.ParseGlob("templates/*.txt")
+	tpl, err = template.ParseGlob("templates/*")
 	if err != nil {
 		panic(err)
 	}
@@ -33,7 +33,7 @@ func main() {
 	fmt.Println("Hi")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "index.html")
+		tpl.ExecuteTemplate(w, "index.html", tpl)
 	})
 
 	http.HandleFunc("/action", func(w http.ResponseWriter, r *http.Request) {
