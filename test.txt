@@ -1,0 +1,8 @@
+2022/10/18
+    cash    $1000
+    assets:cash
+
+2022/10/18
+    cash    $1000
+    assets:cash
+

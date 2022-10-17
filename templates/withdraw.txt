@@ -1,0 +1,4 @@
+{{ .Date }} * withdraw
+    assets:cash     ${{ .Amount }}
+    assets:checking
+

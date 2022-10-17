@@ -1,0 +1,4 @@
+{{ .Date }} * cash
+    cash    ${{ .Amount }}
+    assets:cash
+
