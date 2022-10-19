@@ -6,9 +6,9 @@
 
 ## Feature
 
-### Transaction Template
+### Create Transaction from Template
 
-add your transaction template in `tx/` (in Go's template syntax), and create transaction from them on the fly. 
+Add your transaction template in `tx/` (in Go's template syntax), and create transaction from them in the browser. 
 
 Examples:
 
@@ -30,6 +30,16 @@ Cash expenses
 
 Checkout `tx/` folder for more examples.
 
+![new action](screenshots/action.png)
+
+Adjust your transaction
+
+![confirm](screenshots/confirm.png)
+
+Result page
+
+![result](screenshots/success.png)
+
 ### Ledger Scripts
 
 Run some commonly used ledger commands.
@@ -44,6 +54,8 @@ var SCRIPTS = map[string][]string{
 }
 ```
 
+Rebuild binary everytime you make a change to `config.go`
+
 Execute them and see the result in the browser.
 
 ![execute result](screenshots/exec.png)
@@ -53,6 +65,18 @@ Execute them and see the result in the browser.
 Requirements:
 * go
 * ledger (Only required when you use scripts)
+ 
+Install requirements on Debian / Ubuntu based distro:
+```
+sudo apt install golang ledger
+```
+
+Install requirements on Arch based distro:
+```
+sudo pacman -S golang ledger
+```
+
+Clone the repo
 
 ```
 git clone https://github.com/lancatlin/ledger-quicknote.git
