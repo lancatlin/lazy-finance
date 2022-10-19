@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ledger Quick Note</title>
+    </head>
+    <body>
+        <h1>Comfirm new Tx</h1>
+        <form action="/submit" method="POST">
+            <textarea name="tx" rows="15" cols="40">{{ .Tx }}</textarea><br>
+            <input type="submit">
+        </form>
+    </body>
+</html>

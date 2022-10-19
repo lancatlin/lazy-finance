@@ -1,0 +1,4 @@
+{{ .Date }} {{ with .Name }}{{ . }}{{ else }}{{ .Account }}{{ end }}
+    {{ .Account }}      ${{ .Amount }}
+    cash
+

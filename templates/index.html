@@ -5,15 +5,15 @@
     </head>
     <body>
         <h1>Ledger Quick Note</h1>
-        <form action="/action" method="POST">
+        <form action="/new" method="POST">
             <label>Action: <select name="action">
                 {{ range .Templates }}
-                {{ if ne .Name "index.html" }}
                 <option value="{{ .Name }}">{{ .Name }}</option>
                 {{ end }}
-                {{ end }}
-                </select></label>
-            <label>Amount: <input name="amount" type="number"></label>
+                </select></label><br>
+            <label>Amount: <input name="amount" type="number"></label><br>
+            <label>Account: <input name="account" type="text"></label></br>
+            <label>Tx Name: <input name="name" type="text"></label></br>
             <input type="submit">
         </form>
     </body>
