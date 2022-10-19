@@ -3,11 +3,13 @@ package main
 import (
 	"bytes"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"strings"
 	"text/template"
 	"time"
@@ -18,6 +20,8 @@ var htmlTpl *template.Template
 
 var LEDGER_FILE string
 var LEDGER_INIT string
+var WORKING_DIR string
+var HOST string
 
 type TxData struct {
 	Name    string
@@ -29,8 +33,10 @@ type TxData struct {
 func init() {
 	ledgerTpl = template.Must(template.ParseGlob("tx/*"))
 	htmlTpl = template.Must(template.ParseGlob("templates/*.html"))
-	flag.StringVar(&LEDGER_FILE, "f", "example.txt", "ledger journal file")
-	flag.StringVar(&LEDGER_INIT, "i", "~/.ledgerrc", "ledger initiation file")
+	flag.StringVar(&LEDGER_FILE, "f", "example.txt", "ledger journal file to write")
+	flag.StringVar(&LEDGER_INIT, "i", "", "ledger initiation file")
+	flag.StringVar(&WORKING_DIR, "w", "", "ledger working directory")
+	flag.StringVar(&HOST, "b", "127.0.0.1:8000", "binding address")
 	flag.Parse()
 }
 
@@ -91,8 +97,8 @@ func main() {
 		}
 	})
 
-	log.Println("Listen on http://localhost:8000")
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Printf("Listen on %s", HOST)
+	log.Fatal(http.ListenAndServe(HOST, nil))
 }
 
 func newTx(params url.Values) (result string, err error) {
@@ -118,4 +124,16 @@ func appendToFile(tx string) (err error) {
 	buf := strings.NewReader(strings.ReplaceAll(tx, "\r", "")) // Remove CR generated from browser
 	_, err = io.Copy(f, buf)
 	return err
+}
+
+func executeScript(w io.Writer, name string) (err error) {
+	script, ok := SCRIPTS[name]
+	if !ok {
+		return fmt.Errorf("%s script not found", name)
+	}
+	cmd := exec.Command("ledger", append([]string{"--init-file", LEDGER_INIT}, script...)...)
+	cmd.Dir = WORKING_DIR
+	cmd.Stdout = w
+	cmd.Stderr = w
+	return cmd.Run()
 }
