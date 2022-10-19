@@ -131,7 +131,7 @@ func executeScript(w io.Writer, name string) (err error) {
 	if !ok {
 		return fmt.Errorf("%s script not found", name)
 	}
-	cmd := exec.Command("ledger", append([]string{"--init-file", LEDGER_INIT}, script...)...)
+	cmd := exec.Command("ledger", append([]string{"--init-file", LEDGER_INIT, "--file", LEDGER_FILE}, script...)...)
 	cmd.Dir = WORKING_DIR
 	cmd.Stdout = w
 	cmd.Stderr = w

@@ -1,0 +1,12 @@
+[Unit]
+Description=Ledger Quick Note
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/path/to/ledger-quicknote
+ExecStart=/path/to/ledger-quicknote/ledger-quicknote -f /path/to/ledger/journal.txt -w /path/to/ledger
+
+[Install]
+WantedBy=multi-user.target
