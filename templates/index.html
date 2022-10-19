@@ -6,15 +6,21 @@
     <body>
         <h1>Ledger Quick Note</h1>
         <form action="/new" method="POST">
-            <label>Action: <select name="action">
+            <label>Action: 
                 {{ range .Templates }}
-                <option value="{{ .Name }}">{{ .Name }}</option>
+                <input type="radio" name="action" value="{{ .Name }}">{{ .Name }}</option>
                 {{ end }}
-                </select></label><br>
+                </label><br>
             <label>Amount: <input name="amount" type="number"></label><br>
             <label>Account: <input name="account" type="text"></label></br>
             <label>Tx Name: <input name="name" type="text"></label></br>
             <input type="submit">
         </form>
+        <h2>Scripts</h2>
+        <ul>
+            {{ range $k, $v := .Scripts }}
+            <li><a href="/exec?name={{ $k }}">{{ $k }}</a></li>
+            {{ end }}
+        </ul>
     </body>
 </html>

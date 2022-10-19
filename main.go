@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -26,14 +25,19 @@ type TxData struct {
 }
 
 func init() {
-	ledgerTpl = template.Must(template.ParseGlob("tx/*.txt"))
-	log.Println(ledgerTpl.DefinedTemplates())
+	ledgerTpl = template.Must(template.ParseGlob("tx/*"))
 	htmlTpl = template.Must(template.ParseGlob("templates/*.html"))
 }
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		htmlTpl.ExecuteTemplate(w, "index.html", ledgerTpl)
+		htmlTpl.ExecuteTemplate(w, "index.html", struct {
+			Templates []*template.Template
+			Scripts   map[string][]string
+		}{
+			ledgerTpl.Templates(),
+			SCRIPTS,
+		})
 	})
 
 	http.HandleFunc("/new", func(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +45,6 @@ func main() {
 			http.Error(w, err.Error(), 400)
 			return
 		}
-		fmt.Println(r.Form)
 		tx, err := newTx(r.Form)
 		if err != nil {
 			http.Error(w, err.Error(), 400)
@@ -75,7 +78,8 @@ func main() {
 	})
 
 	http.HandleFunc("/exec", func(w http.ResponseWriter, r *http.Request) {
-		if err := executeScript(w, "register"); err != nil {
+		name := r.FormValue("name")
+		if err := executeScript(w, name); err != nil {
 			http.Error(w, err.Error(), 500)
 			log.Println(err)
 			return
@@ -87,7 +91,7 @@ func main() {
 }
 
 func newTx(params url.Values) (result string, err error) {
-	name := params.Get("action")
+	action := params.Get("action")
 	data := TxData{
 		Date:    time.Now().Format("2006/01/02"),
 		Amount:  params.Get("amount"),
@@ -95,7 +99,7 @@ func newTx(params url.Values) (result string, err error) {
 		Name:    params.Get("name"),
 	}
 	var buf bytes.Buffer
-	err = ledgerTpl.ExecuteTemplate(&buf, name, data)
+	err = ledgerTpl.ExecuteTemplate(&buf, action, data)
 	return buf.String(), nil
 }
 
