@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"io"
 	"log"
 	"net/http"
@@ -15,7 +16,8 @@ import (
 var ledgerTpl *template.Template
 var htmlTpl *template.Template
 
-const LEDGER_FILE = "test.txt"
+var LEDGER_FILE string
+var LEDGER_INIT string
 
 type TxData struct {
 	Name    string
@@ -27,6 +29,9 @@ type TxData struct {
 func init() {
 	ledgerTpl = template.Must(template.ParseGlob("tx/*"))
 	htmlTpl = template.Must(template.ParseGlob("templates/*.html"))
+	flag.StringVar(&LEDGER_FILE, "f", "example.txt", "ledger journal file")
+	flag.StringVar(&LEDGER_INIT, "i", "~/.ledgerrc", "ledger initiation file")
+	flag.Parse()
 }
 
 func main() {
