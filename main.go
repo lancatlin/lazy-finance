@@ -74,6 +74,14 @@ func main() {
 		}
 	})
 
+	http.HandleFunc("/exec", func(w http.ResponseWriter, r *http.Request) {
+		if err := executeScript(w, "register"); err != nil {
+			http.Error(w, err.Error(), 500)
+			log.Println(err)
+			return
+		}
+	})
+
 	log.Println("Listen on http://localhost:8000")
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
