@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 var ledgerTpl *template.Template
@@ -24,10 +24,11 @@ var WORKING_DIR string
 var HOST string
 
 type TxData struct {
-	Name    string
+	Action  string `form:"action" binding:"required"`
+	Name    string `form:"name"`
 	Date    string
-	Amount  string
-	Account string
+	Amount  string `form:"amount" binding:"required"`
+	Account string `form:"account"`
 }
 
 func init() {
@@ -41,8 +42,9 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		htmlTpl.ExecuteTemplate(w, "index.html", struct {
+	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		htmlTpl.ExecuteTemplate(c.Writer, "index.html", struct {
 			Templates []*template.Template
 			Scripts   map[string][]string
 		}{
@@ -51,66 +53,55 @@ func main() {
 		})
 	})
 
-	http.HandleFunc("/new", func(w http.ResponseWriter, r *http.Request) {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, err.Error(), 400)
+	r.POST("/new", func(c *gin.Context) {
+		var data TxData
+		if err := c.ShouldBind(&data); err != nil {
+			c.AbortWithError(400, err)
 			return
 		}
-		tx, err := newTx(r.Form)
+		tx, err := newTx(data)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
-			log.Println(err, r.Form)
+			c.AbortWithError(400, err)
+			log.Println(err, c.Request.Form)
 			return
 		}
-		if err := htmlTpl.ExecuteTemplate(w, "new.html", struct {
+		if err := htmlTpl.ExecuteTemplate(c.Writer, "new.html", struct {
 			Tx string
 		}{tx}); err != nil {
-			http.Error(w, err.Error(), 500)
+			c.AbortWithError(500, err)
 		}
 	})
 
-	http.HandleFunc("/submit", func(w http.ResponseWriter, r *http.Request) {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, err.Error(), 400)
-			return
-		}
-
-		tx := r.FormValue("tx")
+	r.POST("/submit", func(c *gin.Context) {
+		tx := c.PostForm("tx")
 		if err := appendToFile(tx); err != nil {
-			http.Error(w, err.Error(), 500)
+			c.AbortWithError(500, err)
 			return
 		}
 
-		if err := htmlTpl.ExecuteTemplate(w, "success.html", struct {
+		if err := htmlTpl.ExecuteTemplate(c.Writer, "success.html", struct {
 			Tx string
 		}{tx}); err != nil {
-			http.Error(w, err.Error(), 500)
+			c.AbortWithError(500, err)
 		}
 	})
 
-	http.HandleFunc("/exec", func(w http.ResponseWriter, r *http.Request) {
-		name := r.FormValue("name")
-		if err := executeScript(w, name); err != nil {
-			http.Error(w, err.Error(), 500)
+	r.GET("/exec", func(c *gin.Context) {
+		name, _ := c.GetQuery("name")
+		if err := executeScript(c.Writer, name); err != nil {
+			c.AbortWithError(500, err)
 			log.Println(err)
 			return
 		}
 	})
 
-	log.Printf("Listen on %s", HOST)
-	log.Fatal(http.ListenAndServe(HOST, nil))
+	log.Fatal(r.Run(HOST))
 }
 
-func newTx(params url.Values) (result string, err error) {
-	action := params.Get("action")
-	data := TxData{
-		Date:    time.Now().Format("2006/01/02"),
-		Amount:  params.Get("amount"),
-		Account: params.Get("account"),
-		Name:    params.Get("name"),
-	}
+func newTx(data TxData) (result string, err error) {
+	data.Date = time.Now().Format("2006/01/02")
 	var buf bytes.Buffer
-	err = ledgerTpl.ExecuteTemplate(&buf, action, data)
+	err = ledgerTpl.ExecuteTemplate(&buf, data.Action, data)
 	return buf.String(), nil
 }
 
