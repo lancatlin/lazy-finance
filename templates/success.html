@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Ledger Quick Note</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <h1>Ledger Quick Note</h1>
-        <p><strong>Success</strong></p>
-        <pre><code>{{ .Tx }}</code></pre>
-        <p><a href="/">Back to home</a></p>
-    </body>
-</html>
+{{ define "title" }}Success{{ end }}
+{{ define "main" }}
+<p><strong>Success</strong></p>
+<pre><code>{{ .Tx }}</code></pre>
+<p><a href="/">Back to home</a></p>
+{{ end }}

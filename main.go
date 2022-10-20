@@ -33,7 +33,6 @@ type TxData struct {
 
 func init() {
 	ledgerTpl = template.Must(template.ParseGlob("tx/*"))
-	htmlTpl = template.Must(template.ParseGlob("templates/*.html"))
 	flag.StringVar(&LEDGER_FILE, "f", "example.txt", "ledger journal file to write")
 	flag.StringVar(&LEDGER_INIT, "i", "", "ledger initiation file")
 	flag.StringVar(&WORKING_DIR, "w", "", "ledger working directory")
@@ -43,8 +42,9 @@ func init() {
 
 func main() {
 	r := gin.Default()
+	r.HTMLRender = loadTemplates("templates")
 	r.GET("/", func(c *gin.Context) {
-		htmlTpl.ExecuteTemplate(c.Writer, "index.html", struct {
+		c.HTML(200, "index.html", struct {
 			Templates []*template.Template
 			Scripts   map[string][]string
 		}{
@@ -65,11 +65,9 @@ func main() {
 			log.Println(err, c.Request.Form)
 			return
 		}
-		if err := htmlTpl.ExecuteTemplate(c.Writer, "new.html", struct {
+		c.HTML(200, "new.html", struct {
 			Tx string
-		}{tx}); err != nil {
-			c.AbortWithError(500, err)
-		}
+		}{tx})
 	})
 
 	r.POST("/submit", func(c *gin.Context) {
@@ -79,11 +77,9 @@ func main() {
 			return
 		}
 
-		if err := htmlTpl.ExecuteTemplate(c.Writer, "success.html", struct {
+		c.HTML(200, "success.html", struct {
 			Tx string
-		}{tx}); err != nil {
-			c.AbortWithError(500, err)
-		}
+		}{tx})
 	})
 
 	r.GET("/exec", func(c *gin.Context) {
