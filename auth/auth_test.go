@@ -51,4 +51,16 @@ func TestHtpasswdSuccess(t *testing.T) {
 			t.Errorf("%s not found in htpasswd file: %s", u.user, string(data))
 		}
 	}
+	err = store.Remove(user1.user)
+	if err != nil {
+		t.Error(err)
+	}
+
+	data, err = ioutil.ReadFile(path)
+	if err != nil {
+		t.Error(err)
+	}
+	if strings.Contains(string(data), user1.user) {
+		t.Errorf("%s is found in htpasswd file but should be removed: %s", user1.user, string(data))
+	}
 }
