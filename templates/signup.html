@@ -1,0 +1,10 @@
+{{ define "title" }}Sign Up{{ end }}
+{{ define "main" }}
+<h1>Sign Up</h1>
+<form action="/signup" method="POST">
+    <label>Email: <input type="text" name="email"></label><br>
+    <label>Password: <input type="password" name="password"></label><br>
+    {{ with .Error }}<p class="error">{{ . }}</p>{{ end }}
+    <input type="submit" value="Sign Up">
+</form>
+{{ end }}

@@ -29,8 +29,32 @@ func NewHtpasswd(path string) (AuthStore, error) {
 	return s, err
 }
 
+func (s Htpasswd) Register(user, pass string) (err error) {
+	if _, ok := s.accounts[user]; ok {
+		return errors.New("user already exists")
+	}
+	s.accounts[user], err = hash(pass)
+	if err != nil {
+		return
+	}
+	return s.write()
+}
+
+func (s Htpasswd) Authenticate(user, pass string) (err error) {
+	hashed, ok := s.accounts[user]
+	if !ok {
+		return errors.New("user not found")
+	}
+	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(pass))
+}
+
+func (s Htpasswd) Remove(user string) (err error) {
+	delete(s.accounts, user)
+	return s.write()
+}
+
 func (s *Htpasswd) read() (err error) {
-	file, err := os.Open(s.filePath)
+	file, err := os.OpenFile(s.filePath, os.O_RDONLY|os.O_CREATE, 0600)
 	if err != nil {
 		return err
 	}
@@ -64,27 +88,6 @@ func (s *Htpasswd) write() (err error) {
 		}
 	}
 	return nil
-}
-
-func (s Htpasswd) Register(user, pass string) (err error) {
-	s.accounts[user], err = hash(pass)
-	if err != nil {
-		return
-	}
-	return s.write()
-}
-
-func (s Htpasswd) Authenticate(user, pass string) (err error) {
-	hashed, ok := s.accounts[user]
-	if !ok {
-		return errors.New("user not found")
-	}
-	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(pass))
-}
-
-func (s Htpasswd) Remove(user string) (err error) {
-	delete(s.accounts, user)
-	return s.write()
 }
 
 func hash(pass string) (string, error) {
