@@ -1,16 +1,10 @@
 package main
 
 import (
-	"bytes"
+	"errors"
 	"flag"
-	"fmt"
-	"io"
 	"log"
-	"os"
-	"os/exec"
-	"strings"
 	"text/template"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lancatlin/ledger-quicknote/auth"
@@ -27,14 +21,6 @@ var HOST string
 var store auth.AuthStore
 
 const HTPASSWD_FILE = ".htpasswd"
-
-type TxData struct {
-	Action  string `form:"action" binding:"required"`
-	Name    string `form:"name"`
-	Date    string
-	Amount  string `form:"amount" binding:"required"`
-	Account string `form:"account"`
-}
 
 type UserLogin struct {
 	Email    string `form:"email" binding:"required"`
@@ -58,53 +44,6 @@ func init() {
 func main() {
 	r := gin.Default()
 	r.HTMLRender = loadTemplates("templates")
-	r.GET("/dashboard", func(c *gin.Context) {
-		c.HTML(200, "index.html", struct {
-			Templates []*template.Template
-			Scripts   map[string][]string
-		}{
-			ledgerTpl.Templates(),
-			SCRIPTS,
-		})
-	})
-
-	r.POST("/new", func(c *gin.Context) {
-		var data TxData
-		if err := c.ShouldBind(&data); err != nil {
-			c.AbortWithError(400, err)
-			return
-		}
-		tx, err := newTx(data)
-		if err != nil {
-			c.AbortWithError(400, err)
-			log.Println(err, c.Request.Form)
-			return
-		}
-		c.HTML(200, "new.html", struct {
-			Tx string
-		}{tx})
-	})
-
-	r.POST("/submit", func(c *gin.Context) {
-		tx := c.PostForm("tx")
-		if err := appendToFile(tx); err != nil {
-			c.AbortWithError(500, err)
-			return
-		}
-
-		c.HTML(200, "success.html", struct {
-			Tx string
-		}{tx})
-	})
-
-	r.GET("/exec", func(c *gin.Context) {
-		name, _ := c.GetQuery("name")
-		if err := executeScript(c.Writer, name); err != nil {
-			c.AbortWithError(500, err)
-			log.Println(err)
-			return
-		}
-	})
 
 	r.GET("/signup", func(c *gin.Context) {
 		c.HTML(200, "signup.html", nil)
@@ -124,36 +63,72 @@ func main() {
 		c.Redirect(303, "/dashboard")
 	})
 
+	authZone := r.Group("", basicAuth)
+
+	authZone.GET("/dashboard", func(c *gin.Context) {
+		c.HTML(200, "index.html", struct {
+			Templates []*template.Template
+			Scripts   map[string][]string
+		}{
+			ledgerTpl.Templates(),
+			SCRIPTS,
+		})
+	})
+
+	authZone.POST("/new", func(c *gin.Context) {
+		var data TxData
+		if err := c.ShouldBind(&data); err != nil {
+			c.AbortWithError(400, err)
+			return
+		}
+		tx, err := newTx(data)
+		if err != nil {
+			c.AbortWithError(400, err)
+			log.Println(err, c.Request.Form)
+			return
+		}
+		c.HTML(200, "new.html", struct {
+			Tx string
+		}{tx})
+	})
+
+	authZone.POST("/submit", func(c *gin.Context) {
+		tx := c.PostForm("tx")
+		if err := appendToFile(tx); err != nil {
+			c.AbortWithError(500, err)
+			return
+		}
+
+		c.HTML(200, "success.html", struct {
+			Tx string
+		}{tx})
+	})
+
+	authZone.GET("/exec", func(c *gin.Context) {
+		name, _ := c.GetQuery("name")
+		if err := executeScript(c.Writer, name); err != nil {
+			c.AbortWithError(500, err)
+			log.Println(err)
+			return
+		}
+	})
+
 	log.Fatal(r.Run(HOST))
 }
 
-func newTx(data TxData) (result string, err error) {
-	data.Date = time.Now().Format("2006/01/02")
-	var buf bytes.Buffer
-	err = ledgerTpl.ExecuteTemplate(&buf, data.Action, data)
-	return buf.String(), nil
-}
-
-func appendToFile(tx string) (err error) {
-	f, err := os.OpenFile(LEDGER_FILE, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	buf := strings.NewReader(strings.ReplaceAll(tx, "\r", "")) // Remove CR generated from browser
-	_, err = io.Copy(f, buf)
-	return err
-}
-
-func executeScript(w io.Writer, name string) (err error) {
-	script, ok := SCRIPTS[name]
+func basicAuth(c *gin.Context) {
+	var user UserLogin
+	var ok bool
+	user.Email, user.Password, ok = c.Request.BasicAuth()
 	if !ok {
-		return fmt.Errorf("%s script not found", name)
+		c.Header("WWW-Authenticate", "basic realm=\"Login to continue\"")
+		c.AbortWithError(401, errors.New("login required"))
+		return
 	}
-	cmd := exec.Command("ledger", append([]string{"--init-file", LEDGER_INIT, "--file", LEDGER_FILE}, script...)...)
-	cmd.Dir = WORKING_DIR
-	cmd.Stdout = w
-	cmd.Stderr = w
-	return cmd.Run()
+	if err := store.Authenticate(user.Email, user.Password); err != nil {
+		c.AbortWithError(401, err)
+		return
+	}
+	c.Set("user", user)
+	c.Next()
 }
