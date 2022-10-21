@@ -1,12 +1,13 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"log"
+	"net/http"
 	"text/template"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/securecookie"
 	"github.com/lancatlin/ledger-quicknote/auth"
 )
 
@@ -33,9 +34,16 @@ func init() {
 	flag.StringVar(&LEDGER_INIT, "i", "", "ledger initiation file")
 	flag.StringVar(&WORKING_DIR, "w", "", "ledger working directory")
 	flag.StringVar(&HOST, "b", "127.0.0.1:8000", "binding address")
+	var hashKey string
+	flag.StringVar(&hashKey, "s", "", "session secret")
 	flag.Parse()
+
+	if hashKey == "" {
+		hashKey = string(securecookie.GenerateRandomKey(32))
+		log.Printf("Generate random session key: %s", hashKey)
+	}
 	var err error
-	store, err = auth.NewHtpasswd(HTPASSWD_FILE)
+	store, err = auth.New(HTPASSWD_FILE, []byte(hashKey))
 	if err != nil {
 		panic(err)
 	}
@@ -49,19 +57,13 @@ func main() {
 		c.HTML(200, "signup.html", nil)
 	})
 
-	r.POST("/signup", func(c *gin.Context) {
-		var user UserLogin
-		if err := c.ShouldBind(&user); err != nil {
-			c.HTML(400, "signup.html", err)
-			return
-		}
-		if err := store.Register(user.Email, user.Password); err != nil {
-			c.HTML(400, "signup.html", err)
-			return
-		}
-		c.Request.SetBasicAuth(user.Email, user.Password)
-		c.Redirect(303, "/dashboard")
+	r.GET("/signin", func(c *gin.Context) {
+		c.HTML(200, "signin.html", nil)
 	})
+
+	r.POST("/signup", signup)
+
+	r.POST("/signin", signin)
 
 	authZone := r.Group("", basicAuth)
 
@@ -117,18 +119,18 @@ func main() {
 }
 
 func basicAuth(c *gin.Context) {
-	var user UserLogin
-	var ok bool
-	user.Email, user.Password, ok = c.Request.BasicAuth()
-	if !ok {
-		c.Header("WWW-Authenticate", "basic realm=\"Login to continue\"")
-		c.AbortWithError(401, errors.New("login required"))
+	cookie, err := c.Cookie("session")
+	if err == http.ErrNoCookie {
+		c.Redirect(303, "/signin")
 		return
 	}
-	if err := store.Authenticate(user.Email, user.Password); err != nil {
-		c.AbortWithError(401, err)
+	session, err := store.Verify(cookie)
+	if err != nil {
+		c.Redirect(303, "/signin")
 		return
 	}
-	c.Set("user", user)
+	c.Set("user", UserLogin{
+		Email: session.User,
+	})
 	c.Next()
 }

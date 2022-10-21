@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"strings"
 	"testing"
+
+	"github.com/gorilla/securecookie"
 )
 
 type User struct {
@@ -14,6 +16,7 @@ type User struct {
 }
 
 func TestHtpasswdSuccess(t *testing.T) {
+	hashKey := securecookie.GenerateRandomKey(32)
 	path := "/tmp/.htpasswd"
 	user1 := User{
 		user:   "user",
@@ -25,13 +28,21 @@ func TestHtpasswdSuccess(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	store, err := NewHtpasswd(path)
+	store, err := New(path, hashKey)
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = store.Authenticate(user1.user, user1.pass)
+	token, err := store.Login(user1.user, user1.pass)
 	if err != nil {
 		t.Error(err)
+	}
+
+	session, err := store.Verify(token)
+	if err != nil {
+		t.Error(err)
+	}
+	if session.User != user1.user {
+		t.Fatalf("expected %s, got %s", user1.user, session.User)
 	}
 
 	user2 := User{

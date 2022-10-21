@@ -6,24 +6,34 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/gorilla/securecookie"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthStore interface {
 	Register(user, pass string) error
-	Authenticate(user, pass string) error
+	Login(user, pass string) (token string, err error)
+	Verify(token string) (session Session, err error)
 	Remove(user string) error
+}
+
+type Session struct {
+	User   string
+	Expiry time.Time
 }
 
 type Htpasswd struct {
 	accounts map[string]string
 	filePath string
+	cookie   *securecookie.SecureCookie
 }
 
-func NewHtpasswd(path string) (AuthStore, error) {
+func New(path string, hashKey []byte) (AuthStore, error) {
 	s := Htpasswd{
 		filePath: path,
+		cookie:   securecookie.New(hashKey, nil),
 	}
 	err := s.read()
 	return s, err
@@ -40,12 +50,29 @@ func (s Htpasswd) Register(user, pass string) (err error) {
 	return s.write()
 }
 
-func (s Htpasswd) Authenticate(user, pass string) (err error) {
+func (s Htpasswd) Login(user, pass string) (token string, err error) {
 	hashed, ok := s.accounts[user]
 	if !ok {
-		return errors.New("user not found")
+		return "", errors.New("user not found")
 	}
-	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(pass))
+	err = bcrypt.CompareHashAndPassword([]byte(hashed), []byte(pass))
+	if err != nil {
+		return "", errors.New("wrong password")
+	}
+	session := Session{
+		User:   user,
+		Expiry: time.Now().AddDate(0, 0, 7),
+	}
+	token, err = s.cookie.Encode("session", session)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func (s Htpasswd) Verify(token string) (session Session, err error) {
+	err = s.cookie.Decode("session", token, &session)
+	return
 }
 
 func (s Htpasswd) Remove(user string) (err error) {
