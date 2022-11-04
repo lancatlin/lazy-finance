@@ -20,7 +20,7 @@ func (u *User) Dir() string {
 }
 
 func (u *User) FilePath(name string) string {
-	return path.Join(DATA_DIR, u.Email, name)
+	return path.Join(u.Dir(), name)
 }
 
 func (u *User) File(name string) (*os.File, error) {

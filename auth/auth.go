@@ -13,6 +13,7 @@ import (
 )
 
 type AuthStore interface {
+	Get(user string) bool
 	Register(user, pass string) error
 	Login(user, pass string) (token string, err error)
 	Verify(token string) (session Session, err error)
@@ -37,6 +38,11 @@ func New(path string, hashKey []byte) (AuthStore, error) {
 	}
 	err := s.read()
 	return s, err
+}
+
+func (s Htpasswd) Get(user string) bool {
+	_, ok := s.accounts[user]
+	return ok
 }
 
 func (s Htpasswd) Register(user, pass string) (err error) {

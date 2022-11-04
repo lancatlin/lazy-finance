@@ -1,10 +1,11 @@
-{{ define "title" }}Sign Up{{ end }}
+{{ define "title" }}登入{{ end }}
 {{ define "main" }}
-<h1>Sign In</h1>
+<h1>登入</h1>
 <form action="/signin" method="POST">
     <label>Email: <input type="text" name="email"></label><br>
     <label>Password: <input type="password" name="password"></label><br>
     {{ with .Error }}<p class="error">{{ . }}</p>{{ end }}
-    <input type="submit" value="Sign Up">
+    <input type="submit" value="登入">
 </form>
+<a href="signup">沒有帳號嗎？註冊</a>
 {{ end }}
