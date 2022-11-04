@@ -105,5 +105,10 @@ func router() *gin.Engine {
 		}{data})
 	})
 
+	authZone.GET("/download", func(c *gin.Context) {
+		user := getUser(c)
+		c.FileAttachment(user.FilePath(DEFAULT_JOURNAL), DEFAULT_JOURNAL)
+	})
+
 	return r
 }
