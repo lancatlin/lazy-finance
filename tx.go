@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"os/exec"
 	"strings"
@@ -48,14 +47,14 @@ func (u *User) overwriteFile(tx string) (err error) {
 	return err
 }
 
-func (u *User) executeScript(w io.Writer, name string) (err error) {
-	script, ok := SCRIPTS[name]
-	if !ok {
-		return fmt.Errorf("%s script not found", name)
-	}
-	cmd := exec.Command("ledger", append([]string{"--file", DEFAULT_JOURNAL}, script...)...)
+func (u *User) query(query string) (result string, err error) {
+	var buf bytes.Buffer
+
+	cmd := exec.Command("ledger", "--file", DEFAULT_JOURNAL)
 	cmd.Dir = u.Dir()
-	cmd.Stdout = w
-	cmd.Stderr = w
-	return cmd.Run()
+	cmd.Stdin = strings.NewReader(query)
+	cmd.Stdout = &buf
+	cmd.Stderr = &buf
+	err = cmd.Run()
+	return buf.String(), err
 }

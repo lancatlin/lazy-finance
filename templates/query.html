@@ -1,0 +1,12 @@
+{{ define "title" }}查詢{{ end }}
+{{ define "main" }}
+<h1>查詢</h1>
+{{ with .Result }}
+<pre><code>{{ . }}</code></pre>
+{{ end }}
+<form action="/query" method="GET">
+    <input type="text" name="query" value="{{ .Query }}" autofocus>
+    <input type="submit" value="查詢">
+</form>
+{{ template "scripts" .Scripts }}
+{{ end }}

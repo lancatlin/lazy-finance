@@ -9,9 +9,10 @@
             <ul>
             {{ with .User }}
                 {{ .Email }}
+                <li><a href="dashboard">儀表板</a></li>
                 <li><a href="edit">編輯</a></li>
                 <li><a href="download">下載</a></li>
-                <li><a href="exec">查詢</a></li>
+                <li><a href="query">查詢</a></li>
             {{ end }}
         </nav>
         {{ block "main" .Data }}

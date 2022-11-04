@@ -33,7 +33,7 @@ func router() *gin.Engine {
 	authZone.GET("/dashboard", func(c *gin.Context) {
 		HTML(c, 200, "dashboard.html", struct {
 			Templates []*template.Template
-			Scripts   map[string][]string
+			Scripts   map[string]string
 		}{
 			ledgerTpl.Templates(),
 			SCRIPTS,
@@ -69,16 +69,6 @@ func router() *gin.Engine {
 		}{tx})
 	})
 
-	authZone.GET("/exec", func(c *gin.Context) {
-		user := getUser(c)
-		name, _ := c.GetQuery("name")
-		if err := user.executeScript(c.Writer, name); err != nil {
-			c.AbortWithError(500, err)
-			log.Println(err)
-			return
-		}
-	})
-
 	authZone.GET("/edit", func(c *gin.Context) {
 		user := getUser(c)
 		f, err := user.ReadFile(DEFAULT_JOURNAL)
@@ -108,6 +98,25 @@ func router() *gin.Engine {
 	authZone.GET("/download", func(c *gin.Context) {
 		user := getUser(c)
 		c.FileAttachment(user.FilePath(DEFAULT_JOURNAL), DEFAULT_JOURNAL)
+	})
+
+	authZone.GET("/query", func(c *gin.Context) {
+		response := struct {
+			Query   string
+			Result  string
+			Scripts map[string]string
+		}{Scripts: SCRIPTS}
+		user := getUser(c)
+		var ok bool
+		var err error
+		response.Query, ok = c.GetQuery("query")
+		if ok && response.Query != "" {
+			response.Result, err = user.query(response.Query)
+			if err != nil {
+				panic(err)
+			}
+		}
+		HTML(c, 200, "query.html", response)
 	})
 
 	return r
