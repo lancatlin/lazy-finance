@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"flag"
 	"log"
 	"net/http"
@@ -24,6 +25,7 @@ var store auth.AuthStore
 const HTPASSWD_FILE = ".htpasswd"
 
 type UserLogin struct {
+	IsLogin  bool
 	Email    string `form:"email" binding:"required"`
 	Password string `form:"password" binding:"required"`
 }
@@ -34,16 +36,23 @@ func init() {
 	flag.StringVar(&LEDGER_INIT, "i", "", "ledger initiation file")
 	flag.StringVar(&WORKING_DIR, "w", "", "ledger working directory")
 	flag.StringVar(&HOST, "b", "127.0.0.1:8000", "binding address")
-	var hashKey string
-	flag.StringVar(&hashKey, "s", "", "session secret")
+	var hashKeyString string
+	flag.StringVar(&hashKeyString, "s", "", "session secret")
 	flag.Parse()
 
-	if hashKey == "" {
-		hashKey = string(securecookie.GenerateRandomKey(32))
-		log.Printf("Generate random session key: %s", hashKey)
-	}
+	var hashKey []byte
 	var err error
-	store, err = auth.New(HTPASSWD_FILE, []byte(hashKey))
+
+	if hashKeyString == "" {
+		hashKey = securecookie.GenerateRandomKey(32)
+		log.Printf("Generate random session key: %s", base64.StdEncoding.EncodeToString(hashKey))
+	} else {
+		hashKey, err = base64.StdEncoding.DecodeString(hashKeyString)
+		if err != nil {
+			panic(err)
+		}
+	}
+	store, err = auth.New(HTPASSWD_FILE, hashKey)
 	if err != nil {
 		panic(err)
 	}
@@ -53,22 +62,26 @@ func main() {
 	r := gin.Default()
 	r.HTMLRender = loadTemplates("templates")
 
+	r.GET("/", func(c *gin.Context) {
+		HTML(c, 200, "index.html", nil)
+	})
+
 	r.GET("/signup", func(c *gin.Context) {
-		c.HTML(200, "signup.html", nil)
+		HTML(c, 200, "signup.html", nil)
 	})
 
 	r.GET("/signin", func(c *gin.Context) {
-		c.HTML(200, "signin.html", nil)
+		HTML(c, 200, "signin.html", nil)
 	})
 
 	r.POST("/signup", signup)
 
 	r.POST("/signin", signin)
 
-	authZone := r.Group("", basicAuth)
+	authZone := r.Group("", authenticate)
 
 	authZone.GET("/dashboard", func(c *gin.Context) {
-		c.HTML(200, "index.html", struct {
+		HTML(c, 200, "dashboard.html", struct {
 			Templates []*template.Template
 			Scripts   map[string][]string
 		}{
@@ -89,11 +102,10 @@ func main() {
 			log.Println(err, c.Request.Form)
 			return
 		}
-		c.HTML(200, "new.html", struct {
+		HTML(c, 200, "new.html", struct {
 			Tx string
 		}{tx})
 	})
-
 	authZone.POST("/submit", func(c *gin.Context) {
 		tx := c.PostForm("tx")
 		if err := appendToFile(tx); err != nil {
@@ -101,7 +113,7 @@ func main() {
 			return
 		}
 
-		c.HTML(200, "success.html", struct {
+		HTML(c, 200, "success.html", struct {
 			Tx string
 		}{tx})
 	})
@@ -118,7 +130,7 @@ func main() {
 	log.Fatal(r.Run(HOST))
 }
 
-func basicAuth(c *gin.Context) {
+func authenticate(c *gin.Context) {
 	cookie, err := c.Cookie("session")
 	if err == http.ErrNoCookie {
 		c.Redirect(303, "/signin")
