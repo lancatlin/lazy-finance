@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"text/template"
 
@@ -76,6 +77,32 @@ func router() *gin.Engine {
 			log.Println(err)
 			return
 		}
+	})
+
+	authZone.GET("/edit", func(c *gin.Context) {
+		user := getUser(c)
+		f, err := user.ReadFile(DEFAULT_JOURNAL)
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		data, err := ioutil.ReadAll(f)
+		if err != nil {
+			panic(err)
+		}
+		HTML(c, 200, "edit.html", string(data))
+	})
+
+	authZone.POST("/edit", func(c *gin.Context) {
+		user := getUser(c)
+		data := c.PostForm("data")
+		err := user.overwriteFile(data)
+		if err != nil {
+			panic(err)
+		}
+		HTML(c, 200, "success.html", struct {
+			Tx string
+		}{data})
 	})
 
 	return r

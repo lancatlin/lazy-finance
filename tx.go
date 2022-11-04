@@ -25,7 +25,19 @@ func newTx(data TxData) (result string, err error) {
 }
 
 func (u *User) appendToFile(tx string) (err error) {
-	f, err := u.File(DEFAULT_JOURNAL)
+	f, err := u.AppendFile(DEFAULT_JOURNAL)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	buf := strings.NewReader(strings.ReplaceAll(tx, "\r", "")) // Remove CR generated from browser
+	_, err = io.Copy(f, buf)
+	return err
+}
+
+func (u *User) overwriteFile(tx string) (err error) {
+	f, err := u.WriteFile(DEFAULT_JOURNAL)
 	if err != nil {
 		return err
 	}

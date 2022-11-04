@@ -1,0 +1,8 @@
+{{ define "title" }}編輯{{ end }}
+{{ define "main" }}
+<h1>編輯帳本</h1>
+<form action="/edit" method="POST">
+    <textarea name="data" rows="15" cols="40">{{ . }}</textarea><br>
+    <input type="submit" value="儲存">
+</form>
+{{ end }}

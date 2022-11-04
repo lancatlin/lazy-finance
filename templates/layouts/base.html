@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ block "title" . }}Ledger Quick Note{{ end }}</title>
+        <title>{{ block "title" . }}Ledger 速記{{ end }}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <nav>
+            <ul>
             {{ with .User }}
                 {{ .Email }}
+                <li><a href="edit">編輯</a></li>
+                <li><a href="download">下載</a></li>
+                <li><a href="exec">查詢</a></li>
             {{ end }}
         </nav>
         {{ block "main" .Data }}
