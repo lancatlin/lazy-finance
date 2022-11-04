@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -25,8 +24,8 @@ func newTx(data TxData) (result string, err error) {
 	return buf.String(), nil
 }
 
-func appendToFile(tx string) (err error) {
-	f, err := os.OpenFile(LEDGER_FILE, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+func (u *User) appendToFile(tx string) (err error) {
+	f, err := u.File(DEFAULT_JOURNAL)
 	if err != nil {
 		return err
 	}
@@ -37,13 +36,13 @@ func appendToFile(tx string) (err error) {
 	return err
 }
 
-func executeScript(w io.Writer, name string) (err error) {
+func (u *User) executeScript(w io.Writer, name string) (err error) {
 	script, ok := SCRIPTS[name]
 	if !ok {
 		return fmt.Errorf("%s script not found", name)
 	}
-	cmd := exec.Command("ledger", append([]string{"--init-file", LEDGER_INIT, "--file", LEDGER_FILE}, script...)...)
-	cmd.Dir = WORKING_DIR
+	cmd := exec.Command("ledger", append([]string{"--file", DEFAULT_JOURNAL}, script...)...)
+	cmd.Dir = u.Dir()
 	cmd.Stdout = w
 	cmd.Stderr = w
 	return cmd.Run()

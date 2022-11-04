@@ -1,9 +1,34 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func authenticate(c *gin.Context) {
+	cookie, err := c.Cookie("session")
+	if err == http.ErrNoCookie {
+		c.Redirect(303, "/signin")
+		return
+	}
+	session, err := store.Verify(cookie)
+	if err != nil {
+		c.Redirect(303, "/signin")
+		return
+	}
+	c.Set("user", User{
+		Email: session.User,
+	})
+	c.Next()
+}
+
+func getUser(c *gin.Context) User {
+	return c.MustGet("user").(User)
+}
 
 func signup(c *gin.Context) {
-	var user UserLogin
+	var user User
 	if err := c.ShouldBind(&user); err != nil {
 		HTML(c, 400, "signup.html", err)
 		return
@@ -16,7 +41,7 @@ func signup(c *gin.Context) {
 }
 
 func signin(c *gin.Context) {
-	var user UserLogin
+	var user User
 	if err := c.ShouldBind(&user); err != nil {
 		HTML(c, 400, "signin.html", err)
 		return

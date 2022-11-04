@@ -31,7 +31,7 @@ type Data interface{}
 
 type Page struct {
 	Data
-	User UserLogin
+	User User
 }
 
 func HTML(c *gin.Context, status int, name string, data interface{}) {
@@ -40,7 +40,7 @@ func HTML(c *gin.Context, status int, name string, data interface{}) {
 	}
 	_, ok := c.Get("user")
 	if ok {
-		output.User = c.MustGet("user").(UserLogin)
+		output.User = c.MustGet("user").(User)
 	}
 	c.HTML(status, name, output)
 }
