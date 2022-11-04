@@ -1,15 +1,16 @@
 {{ define "main" }}
-<h1>Ledger Quick Note</h1>
+<h1>Ledger 速記</h1>
 <form action="/new" method="POST">
-    <label>Action: 
+    <label>選擇模板：
         {{ range .Templates }}
         <input type="radio" name="action" value="{{ .Name }}">{{ .Name }}</option>
         {{ end }}
     </label><br>
-    <label>Amount: <input name="amount" type="number"></label><br>
-    <label>Account: <input name="account" type="text"></label></br>
-    <label>Tx Name: <input name="name" type="text"></label></br>
-    <input type="submit">
+    <label>金額：<input name="amount" type="number"></label><br>
+    <label>目的帳戶：<input name="dest" type="text"></label></br>
+    <label>來源帳戶：<input name="src" type="text"></label></br>
+    <label>名稱：<input name="name" type="text"></label></br>
+    <input type="submit" value="新增記錄">
 </form>
 {{ template "scripts" .Scripts }}
 {{ end }}

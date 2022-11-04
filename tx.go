@@ -9,11 +9,12 @@ import (
 )
 
 type TxData struct {
-	Action  string `form:"action" binding:"required"`
-	Name    string `form:"name"`
-	Date    string
-	Amount  string `form:"amount" binding:"required"`
-	Account string `form:"account"`
+	Action      string `form:"action" binding:"required"`
+	Name        string `form:"name"`
+	Date        string
+	Amount      string `form:"amount" binding:"required"`
+	Destination string `form:"dest"`
+	Source      string `form:"src"`
 }
 
 func newTx(data TxData) (result string, err error) {
