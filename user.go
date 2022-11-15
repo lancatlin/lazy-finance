@@ -38,3 +38,15 @@ func (u *User) ReadFile(name string) (*os.File, error) {
 func (u *User) WriteFile(name string) (*os.File, error) {
 	return u.File(name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 }
+
+func (u *User) List() ([]string, error) {
+	files, err := os.ReadDir(u.Dir())
+	if err != nil {
+		panic(err)
+	}
+	result := make([]string, len(files))
+	for i, v := range files {
+		result[i] = v.Name()
+	}
+	return result, nil
+}

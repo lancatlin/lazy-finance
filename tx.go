@@ -36,8 +36,8 @@ func (u *User) appendToFile(tx string) (err error) {
 	return err
 }
 
-func (u *User) overwriteFile(tx string) (err error) {
-	f, err := u.WriteFile(DEFAULT_JOURNAL)
+func (u *User) overwriteFile(filename string, tx string) (err error) {
+	f, err := u.WriteFile(filename)
 	if err != nil {
 		return err
 	}

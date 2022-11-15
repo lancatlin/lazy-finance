@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"text/template"
@@ -13,7 +14,7 @@ func router() *gin.Engine {
 	r.HTMLRender = loadTemplates("templates")
 
 	r.GET("/", func(c *gin.Context) {
-		HTML(c, 200, "index.html", nil)
+		c.Redirect(303, "/dashboard")
 	})
 
 	r.GET("/signup", func(c *gin.Context) {
@@ -70,23 +71,43 @@ func router() *gin.Engine {
 	})
 
 	authZone.GET("/edit", func(c *gin.Context) {
-		user := getUser(c)
-		f, err := user.ReadFile(DEFAULT_JOURNAL)
-		if err != nil {
-			panic(err)
-		}
-		defer f.Close()
-		data, err := ioutil.ReadAll(f)
-		if err != nil {
-			panic(err)
-		}
-		HTML(c, 200, "edit.html", string(data))
+		c.Redirect(303, fmt.Sprintf("/edit/%s", DEFAULT_JOURNAL))
 	})
 
-	authZone.POST("/edit", func(c *gin.Context) {
+	authZone.GET("/edit/:filename", func(c *gin.Context) {
 		user := getUser(c)
+		filename := c.Param("filename")
+		list, err := user.List()
+		if err != nil {
+			panic(err)
+		}
+		exists := contain(list, filename)
+		var data []byte
+		if exists {
+			f, err := user.ReadFile(filename)
+			if err != nil {
+				panic(err)
+			}
+			defer f.Close()
+			data, err = ioutil.ReadAll(f)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		HTML(c, 200, "edit.html", gin.H{
+			"Data":     string(data),
+			"FileName": filename,
+			"FileList": list,
+			"Exists":   exists,
+		})
+	})
+
+	authZone.POST("/edit/:filename", func(c *gin.Context) {
+		user := getUser(c)
+		filename := c.Param("filename")
 		data := c.PostForm("data")
-		err := user.overwriteFile(data)
+		err := user.overwriteFile(filename, data)
 		if err != nil {
 			panic(err)
 		}
