@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"text/template"
@@ -71,12 +70,8 @@ func router() *gin.Engine {
 	})
 
 	authZone.GET("/edit", func(c *gin.Context) {
-		c.Redirect(303, fmt.Sprintf("/edit/%s", DEFAULT_JOURNAL))
-	})
-
-	authZone.GET("/edit/:filename", func(c *gin.Context) {
 		user := getUser(c)
-		filename := c.Param("filename")
+		filename := c.Query("filename")
 		list, err := user.List()
 		if err != nil {
 			panic(err)
@@ -103,17 +98,18 @@ func router() *gin.Engine {
 		})
 	})
 
-	authZone.POST("/edit/:filename", func(c *gin.Context) {
+	authZone.POST("/edit", func(c *gin.Context) {
 		user := getUser(c)
-		filename := c.Param("filename")
+		filename := c.PostForm("filename")
 		data := c.PostForm("data")
 		err := user.overwriteFile(filename, data)
 		if err != nil {
 			panic(err)
 		}
-		HTML(c, 200, "success.html", struct {
-			Tx string
-		}{data})
+		HTML(c, 200, "success.html", gin.H{
+			"FileName": filename,
+			"Tx":       data,
+		})
 	})
 
 	authZone.GET("/download", func(c *gin.Context) {
