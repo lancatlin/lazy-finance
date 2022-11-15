@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"flag"
 	"log"
+	"path"
 	"text/template"
 
 	"github.com/gorilla/securecookie"
@@ -41,7 +42,7 @@ func init() {
 			panic(err)
 		}
 	}
-	store, err = auth.New(HTPASSWD_FILE, hashKey)
+	store, err = auth.New(path.Join(DATA_DIR, HTPASSWD_FILE), hashKey)
 	if err != nil {
 		panic(err)
 	}
