@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path"
 	"strings"
+	"text/template"
 	"time"
 )
 
@@ -140,9 +141,14 @@ type TxData struct {
 	Source      string `form:"src"`
 }
 
-func newTx(data TxData) (result string, err error) {
+func (u *User) newTx(data TxData) (result string, err error) {
 	data.Date = time.Now().Format("2006/01/02")
 	var buf bytes.Buffer
-	err = ledgerTpl.ExecuteTemplate(&buf, data.Action, data)
-	return buf.String(), nil
+	tpl, err := template.ParseFiles(u.FilePath(data.Action))
+	if err != nil {
+		return
+	}
+	err = tpl.ExecuteTemplate(&buf, data.Action, data)
+	result = buf.String()
+	return
 }

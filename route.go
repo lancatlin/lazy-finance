@@ -51,15 +51,16 @@ func router() *gin.Engine {
 			c.AbortWithError(400, err)
 			return
 		}
-		tx, err := newTx(data)
+		user := getUser(c)
+		tx, err := user.newTx(data)
 		if err != nil {
 			c.AbortWithError(400, err)
 			log.Println(err, c.Request.Form)
 			return
 		}
-		HTML(c, 200, "new.html", struct {
-			Tx string
-		}{tx})
+		HTML(c, 200, "new.html", gin.H{
+			"Tx": tx,
+		})
 	})
 	authZone.POST("/submit", func(c *gin.Context) {
 		user := getUser(c)
@@ -69,9 +70,7 @@ func router() *gin.Engine {
 			return
 		}
 
-		HTML(c, 200, "success.html", struct {
-			Tx string
-		}{tx})
+		c.Redirect(303, "/dashboard")
 	})
 
 	authZone.GET("/edit", func(c *gin.Context) {
