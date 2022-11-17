@@ -100,7 +100,7 @@ func (u *User) overwriteFile(filename string, tx string) (err error) {
 func (u *User) query(query string) (result string, err error) {
 	var buf bytes.Buffer
 
-	cmd := exec.Command("ledger", "--file", DEFAULT_JOURNAL)
+	cmd := exec.Command("ledger")
 	cmd.Dir = u.Dir()
 	cmd.Stdin = strings.NewReader(query)
 	cmd.Stdout = &buf
