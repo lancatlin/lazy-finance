@@ -1,0 +1,13 @@
+account assets
+account liabilities
+account income
+account expenses
+account equity
+account assets:savings
+    alias savings
+account assets:checking
+    alias checking
+account expenses:cash
+    alias cash
+account expenses:food
+    alias food
