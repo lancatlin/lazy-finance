@@ -1,8 +1,0 @@
-{{ define "scripts" }}
-<h3>快速查詢</h3>
-<ul>
-    {{ range $k, $v := . }}
-    <li><a href="/query?query={{ urlquery $v }}">{{ $k }}</a></li>
-    {{ end }}
-</ul>
-{{ end }}

@@ -6,7 +6,7 @@ var SCRIPTS = map[string]string{
 	"balance this month": "b -b \"this month\"",
 }
 
-const SCRIPTS_FILE = "queries.txt"
+const QUERIES_FILE = "queries.txt"
 const HTPASSWD_FILE = ".htpasswd"
 const DEFAULT_JOURNAL = "ledger.txt"
 const ARCHETYPES_DIR = "archetypes"

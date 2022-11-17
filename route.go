@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -31,16 +30,18 @@ func router() *gin.Engine {
 
 	authZone.GET("/dashboard", func(c *gin.Context) {
 		user := getUser(c)
-		scripts, err := user.scripts()
+		queries, err := user.queries()
 		if err != nil {
-			panic(err)
+			c.AbortWithError(500, err)
+			return
 		}
 		templates, err := user.templates()
 		if err != nil {
-			panic(err)
+			c.AbortWithError(500, err)
+			return
 		}
 		HTML(c, 200, "dashboard.html", gin.H{
-			"Scripts":   scripts,
+			"Queries":   queries,
 			"Templates": templates,
 		})
 	})
@@ -78,19 +79,15 @@ func router() *gin.Engine {
 		filename := c.Query("filename")
 		list, err := user.List()
 		if err != nil {
-			panic(err)
+			c.AbortWithError(500, err)
+			return
 		}
 		exists := contain(list, filename)
 		var data []byte
 		if exists {
-			f, err := user.ReadFile(filename)
+			data, err = user.readAllFile(filename)
 			if err != nil {
-				panic(err)
-			}
-			defer f.Close()
-			data, err = ioutil.ReadAll(f)
-			if err != nil {
-				panic(err)
+				c.AbortWithError(500, err)
 			}
 		}
 
@@ -108,7 +105,8 @@ func router() *gin.Engine {
 		data := c.PostForm("data")
 		err := user.overwriteFile(filename, data)
 		if err != nil {
-			panic(err)
+			c.AbortWithError(500, err)
+			return
 		}
 		HTML(c, 200, "success.html", gin.H{
 			"FileName": filename,
@@ -126,19 +124,21 @@ func router() *gin.Engine {
 		response := struct {
 			Query   string
 			Result  string
-			Scripts map[string]string
+			Queries [][2]string
 		}{}
 		var ok bool
 		var err error
-		response.Scripts, err = user.scripts()
+		response.Queries, err = user.queries()
 		if err != nil {
-			panic(err)
+			c.AbortWithError(500, err)
+			return
 		}
 		response.Query, ok = c.GetQuery("query")
 		if ok && response.Query != "" {
 			response.Result, err = user.query(response.Query)
 			if err != nil {
-				panic(err)
+				c.AbortWithError(500, err)
+				return
 			}
 		}
 		HTML(c, 200, "query.html", response)

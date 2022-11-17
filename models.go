@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -54,13 +54,23 @@ func (u *User) WriteFile(name string) (*os.File, error) {
 func (u *User) List() ([]string, error) {
 	files, err := os.ReadDir(u.Dir())
 	if err != nil {
-		panic(err)
+		return []string{}, fmt.Errorf("Failed to open directory: %w", err)
 	}
 	result := make([]string, len(files))
 	for i, v := range files {
 		result[i] = v.Name()
 	}
 	return result, nil
+}
+
+func (u *User) readAllFile(name string) (data []byte, err error) {
+	f, err := u.ReadFile(name)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	data, err = ioutil.ReadAll(f)
+	return
 }
 
 func (u *User) appendToFile(tx string) (err error) {
@@ -99,24 +109,24 @@ func (u *User) query(query string) (result string, err error) {
 	return buf.String(), err
 }
 
-func (u *User) scripts() (scripts map[string]string, err error) {
-	f, err := u.ReadFile(SCRIPTS_FILE)
+func (u *User) queries() (queries [][2]string, err error) {
+	f, err := u.ReadFile(QUERIES_FILE)
 	if err != nil {
-		panic(err)
+		err = fmt.Errorf("Failed to read queries file: %w", err)
+		return
 	}
 	defer f.Close()
 
 	fileScanner := bufio.NewScanner(f)
 	fileScanner.Split(bufio.ScanLines)
 
-	scripts = make(map[string]string)
+	queries = make([][2]string, 0)
 	for fileScanner.Scan() {
 		arr := strings.SplitN(fileScanner.Text(), ":", 2)
 		if len(arr) < 2 {
-			err = fmt.Errorf("invalid data %s", arr)
-			return
+			continue
 		}
-		scripts[arr[0]] = arr[1]
+		queries = append(queries, [2]string{arr[0], arr[1]})
 	}
 	return
 }
@@ -131,7 +141,6 @@ func (u *User) templates() (templates []string, err error) {
 			templates = append(templates, v)
 		}
 	}
-	log.Println(templates)
 	return
 }
 
