@@ -11,7 +11,6 @@ import (
 	"github.com/lancatlin/ledger-quicknote/auth"
 )
 
-var ledgerTpl *template.Template
 var htmlTpl *template.Template
 
 var DATA_DIR string
@@ -20,7 +19,6 @@ var HOST string
 var store auth.AuthStore
 
 func init() {
-	ledgerTpl = template.Must(template.ParseGlob("tx/*"))
 	flag.StringVar(&DATA_DIR, "d", "data", "data folder")
 	flag.StringVar(&HOST, "b", "127.0.0.1:8000", "binding address")
 	var hashKeyString string
