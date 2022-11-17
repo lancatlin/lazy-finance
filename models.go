@@ -12,6 +12,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	cp "github.com/otiai10/copy"
 )
 
 type User struct {
@@ -22,10 +24,11 @@ type User struct {
 
 func (u *User) Dir() string {
 	dir := path.Join(DATA_DIR, u.Email)
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		panic(err)
-	}
 	return dir
+}
+
+func (u *User) Mkdir() error {
+	return cp.Copy(ARCHETYPES_DIR, u.Dir())
 }
 
 func (u *User) FilePath(name string) string {

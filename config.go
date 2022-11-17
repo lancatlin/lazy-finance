@@ -9,3 +9,4 @@ var SCRIPTS = map[string]string{
 const SCRIPTS_FILE = "queries.txt"
 const HTPASSWD_FILE = ".htpasswd"
 const DEFAULT_JOURNAL = "ledger.txt"
+const ARCHETYPES_DIR = "archetypes"

@@ -37,6 +37,9 @@ func signup(c *gin.Context) {
 		HTML(c, 400, "signup.html", err)
 		return
 	}
+	if err := user.Mkdir(); err != nil {
+		return
+	}
 	signin(c)
 }
 
