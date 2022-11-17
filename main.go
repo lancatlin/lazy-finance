@@ -19,9 +19,6 @@ var HOST string
 
 var store auth.AuthStore
 
-const HTPASSWD_FILE = ".htpasswd"
-const DEFAULT_JOURNAL = "ledger.txt"
-
 func init() {
 	ledgerTpl = template.Must(template.ParseGlob("tx/*"))
 	flag.StringVar(&DATA_DIR, "d", "data", "data folder")

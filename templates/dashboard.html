@@ -3,7 +3,7 @@
 <form action="/new" method="POST">
     <label>選擇模板：
         {{ range .Templates }}
-        <input type="radio" name="action" value="{{ .Name }}">{{ .Name }}</option>
+        <input type="radio" name="action" value="{{ . }}">{{ . }}</option>
         {{ end }}
     </label><br>
     <label>金額：<input name="amount" type="number"></label><br>

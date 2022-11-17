@@ -3,7 +3,6 @@ package main
 import (
 	"io/ioutil"
 	"log"
-	"text/template"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,12 +30,18 @@ func router() *gin.Engine {
 	authZone := r.Group("", authenticate)
 
 	authZone.GET("/dashboard", func(c *gin.Context) {
-		HTML(c, 200, "dashboard.html", struct {
-			Templates []*template.Template
-			Scripts   map[string]string
-		}{
-			ledgerTpl.Templates(),
-			SCRIPTS,
+		user := getUser(c)
+		scripts, err := user.scripts()
+		if err != nil {
+			panic(err)
+		}
+		templates, err := user.templates()
+		if err != nil {
+			panic(err)
+		}
+		HTML(c, 200, "dashboard.html", gin.H{
+			"Scripts":   scripts,
+			"Templates": templates,
 		})
 	})
 
@@ -118,14 +123,18 @@ func router() *gin.Engine {
 	})
 
 	authZone.GET("/query", func(c *gin.Context) {
+		user := getUser(c)
 		response := struct {
 			Query   string
 			Result  string
 			Scripts map[string]string
-		}{Scripts: SCRIPTS}
-		user := getUser(c)
+		}{}
 		var ok bool
 		var err error
+		response.Scripts, err = user.scripts()
+		if err != nil {
+			panic(err)
+		}
 		response.Query, ok = c.GetQuery("query")
 		if ok && response.Query != "" {
 			response.Result, err = user.query(response.Query)
