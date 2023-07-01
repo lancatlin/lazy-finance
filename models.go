@@ -23,7 +23,7 @@ type User struct {
 }
 
 func (u *User) Dir() string {
-	dir := path.Join(DATA_DIR, u.Email)
+	dir := path.Join(config.DataPath, u.Email)
 	return dir
 }
 
