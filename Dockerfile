@@ -1,5 +1,7 @@
 FROM golang:1.19
 
+RUN apt update && apt install -y ledger
+
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
