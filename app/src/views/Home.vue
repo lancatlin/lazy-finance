@@ -47,7 +47,6 @@ const onSubmit = () => {
 
 <template>
   <div class="container max-w-lg mx-auto px-3">
-    <h1 class="text-3xl underline mb-5">Lazy 累記</h1>
     <div>
       <div class="mb-6 flex items-center">
         <label for="template" class="text-sm font-medium text-gray-900 mr-2"
@@ -73,57 +72,67 @@ const onSubmit = () => {
           class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
         />
       </div>
+
+      <!-- Accounts-->
       <div
-        class="flex flex-wrap -mx-3 mb-2"
+        class="flex -mx-3 mb-2 items-center"
         v-for="(account, index) in accounts"
         :key="index"
       >
-        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-          <label
-            :for="`account-${index}-name`"
-            class="block mb-2 text-md font-medium text-gray-900"
-            >Account {{ index + 1 }}</label
-          >
-          <input
-            type="text"
-            :id="`account-${index}-name`"
-            v-model="account.name"
-            :placeholder="template.accounts[index]?.name"
-            class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
-          />
-        </div>
-        <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-          <label
-            :for="`account-${index}-amount`"
-            class="block mb-2 text-md font-medium text-gray-900"
-            >Amount</label
-          >
-          <input
-            type="number"
-            :id="`account-${index}-amount`"
-            v-model="account.amount"
-            :placeholder="template.accounts[index]?.amount?.toString()"
-            class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
-          />
+        <div class="flex w-auto">
+          <!-- Account name-->
+          <div class="w-1/2 px-3 mb-6 md:mb-0">
+            <label
+              :for="`account-${index}-name`"
+              class="block mb-2 text-md font-medium text-gray-900"
+              >Account {{ index + 1 }}</label
+            >
+            <input
+              type="text"
+              :id="`account-${index}-name`"
+              v-model="account.name"
+              :placeholder="template.accounts[index]?.name"
+              class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
+            />
+          </div>
+
+          <!-- Amount -->
+          <div class="w-1/4 px-3 mb-6 md:mb-0">
+            <label
+              :for="`account-${index}-amount`"
+              class="block mb-2 text-md font-medium text-gray-900"
+              >Amount</label
+            >
+            <input
+              type="number"
+              :id="`account-${index}-amount`"
+              v-model="account.amount"
+              :placeholder="template.accounts[index]?.amount?.toString()"
+              class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
+            />
+          </div>
+
+          <!-- Commodity -->
+          <div class="w-1/4 px-3 mb-6 md:mb-0">
+            <label
+              :for="`account-${index}-commodity`"
+              class="block mb-2 text-md font-medium text-gray-900"
+              >Commodity</label
+            >
+            <input
+              type="text"
+              :id="`account-${index}-commodity`"
+              v-model="account.commodity"
+              :placeholder="template.accounts[index]?.commodity"
+              class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
+            />
+          </div>
         </div>
 
-        <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-          <label
-            :for="`account-${index}-commodity`"
-            class="block mb-2 text-md font-medium text-gray-900"
-            >Commodity</label
-          >
-          <input
-            type="text"
-            :id="`account-${index}-commodity`"
-            v-model="account.commodity"
-            :placeholder="template.accounts[index]?.commodity"
-            class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
-          />
-        </div>
-        <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+        <!-- Remove button-->
+        <div class="w-auto px-3">
           <button
-            class="block bg-gray-100 hover:bg-white border px-3 py-2 rounded shadow disabled:shadow-none disabled:bg-gray-200 mt-5 hover:white"
+            class="bg-gray-100 hover:bg-white border px-3 py-2 rounded shadow disabled:shadow-none disabled:bg-gray-200 mt-5 hover:white"
             v-if="accounts.length > 2"
             @click="removeAccount(index)"
           >
@@ -131,18 +140,24 @@ const onSubmit = () => {
           </button>
         </div>
       </div>
+
+      <!-- Add account button -->
       <button
         @click="addAccount"
         class="block bg-gray-100 hover:bg-white border px-3 py-2 rounded shadow disabled:shadow-none disabled:bg-gray-200 mt-5 hover:white"
       >
         Add Account
       </button>
+
+      <!-- Error message -->
       <div
         v-if="errorMessage"
         class="mt-4 text-red-600 border border-red-600 p-3 rounded"
       >
         {{ errorMessage }}
       </div>
+
+      <!-- Submit -->
       <button
         @click="onSubmit"
         class="block bg-gray-100 hover:bg-white border px-3 py-2 rounded shadow disabled:shadow-none disabled:bg-gray-200 mt-5 hover:white"
