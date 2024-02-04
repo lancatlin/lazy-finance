@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
+import { Account, Template } from "../models/types";
+import validate from "../models/validate";
 
-const memo = ref("");
-const templateId = ref("default");
-const errorMessage = ref("");
+const name = ref<string>("");
+const templateId = ref<string>("default");
+const errorMessage = ref<string>("");
 
-const template = {
+const template: Template = {
   accounts: [
     { name: "expenses", commodity: "$", amount: 50 },
-    { name: "assets:cash", commodity: "$" },
+    { name: "assets:cash", commodity: "$", amount: null },
   ],
 };
 
-const accounts = reactive([
+const accounts = reactive<Account[]>([
   { name: "", amount: null, commodity: "" },
   { name: "", amount: null, commodity: "" },
 ]);
@@ -21,43 +23,23 @@ const addAccount = () => {
   accounts.push({ name: "", amount: null, commodity: "" });
 };
 
-const removeAccount = (index) => {
+const removeAccount = (index: number) => {
   accounts.splice(index, 1);
-};
-
-const validateInput = () => {
-  let nullCount = 0;
-  let totalAmount = 0;
-  const result = accounts.map((account, index) => {
-    const output = {};
-    output.name = account.name || template.accounts[index]?.name;
-    output.amount = account.amount || template.accounts[index]?.amount || null;
-    output.commodity = account.commodity || template.accounts[index]?.commodity;
-    if (output.amount === null) nullCount++;
-    else totalAmount += output.amount;
-    if (!output.name) {
-      throw `Account ${index + 1} cannot be empty.`;
-    }
-    return output;
-  });
-  console.log(result);
-
-  if (nullCount > 1) {
-    throw "Only one account can have a empty amount.";
-  } else if (nullCount === 0 && totalAmount !== 0) {
-    throw "The total amount of every account should be 0.";
-  }
-  return result;
 };
 
 const onSubmit = () => {
   try {
-    const result = validateInput();
+    const result = validate({
+      accounts,
+      name: name.value,
+      template,
+    });
     console.log(result);
     console.log("Submitted successfully");
     errorMessage.value = "";
   } catch (e) {
-    errorMessage.value = e;
+    console.error(e);
+    errorMessage.value = e as string; // Cast error to string to satisfy the type of errorMessage
     return;
   }
 };
@@ -65,14 +47,11 @@ const onSubmit = () => {
 
 <template>
   <div class="container max-w-lg mx-auto px-3">
-    <h1 class="text-3xl underline">Lazy 累記</h1>
-    <p>Some dummy text</p>
+    <h1 class="text-3xl underline mb-5">Lazy 累記</h1>
     <div>
-      <div class="mb-6">
-        <label
-          for="template"
-          class="block mb-2 text-sm font-medium text-gray-900"
-          >Template
+      <div class="mb-6 flex items-center">
+        <label for="template" class="text-sm font-medium text-gray-900 mr-2"
+          >Template:
         </label>
         <select
           v-model="templateId"
@@ -80,15 +59,26 @@ const onSubmit = () => {
           class="bg-gray-50 border rounded"
         >
           <option>default</option>
-          <option>restarant</option>
+          <option>restaurant</option>
         </select>
+      </div>
+      <div class="mb-6">
+        <label for="name" class="block mb-2 text-md font-medium text-gray-900"
+          >Name</label
+        >
+        <input
+          v-model="name"
+          type="text"
+          id="name"
+          class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
+        />
       </div>
       <div
         class="flex flex-wrap -mx-3 mb-2"
         v-for="(account, index) in accounts"
-        v-key="index"
+        :key="index"
       >
-        <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
           <label
             :for="`account-${index}-name`"
             class="block mb-2 text-md font-medium text-gray-900"
@@ -112,14 +102,14 @@ const onSubmit = () => {
             type="number"
             :id="`account-${index}-amount`"
             v-model="account.amount"
-            :placeholder="template.accounts[index]?.amount"
+            :placeholder="template.accounts[index]?.amount?.toString()"
             class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
           />
         </div>
 
         <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
           <label
-            :for="`account-${index}-comodity`"
+            :for="`account-${index}-commodity`"
             class="block mb-2 text-md font-medium text-gray-900"
             >Commodity</label
           >
@@ -147,18 +137,6 @@ const onSubmit = () => {
       >
         Add Account
       </button>
-      <input type="text" id="from" />
-      <div class="mb-6">
-        <label for="memo" class="block mb-2 text-md font-medium text-gray-900"
-          >Memo</label
-        >
-        <input
-          v-model="memo"
-          type="text"
-          id="memo"
-          class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
-        />
-      </div>
       <div
         v-if="errorMessage"
         class="mt-4 text-red-600 border border-red-600 p-3 rounded"
