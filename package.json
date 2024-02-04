@@ -1,9 +1,9 @@
 {
-  "name": "ledger-quicknote",
+  "name": "lazy-finance",
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
-  "repository": "git@github.com:lancatlin/ledger-quicknote.git",
+  "repository": "git@github.com:lancatlin/lazy-finance.git",
   "author": "wancat <wancat@wancat.cc>",
   "license": "MIT",
   "workspaces": [

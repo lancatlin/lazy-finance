@@ -8,11 +8,12 @@
 
 ### Create Transaction from Template
 
-Add your transaction template in `tx/` (in Go's template syntax), and create transaction from them in the browser. 
+Add your transaction template in `tx/` (in Go's template syntax), and create transaction from them in the browser.
 
 Examples:
 
 Take some cash
+
 ```
 {{ .Date }} * cash
     expenses:cash    ${{ .Amount }}
@@ -21,11 +22,12 @@ Take some cash
 ```
 
 Cash expenses
+
 ```
 {{ .Date }} {{ with .Name }}{{ . }}{{ else }}{{ .Account }}{{ end }}
     {{ .Account }}      ${{ .Amount }}
     expenses:cash
-    
+
 ```
 
 Checkout `tx/` folder for more examples.
@@ -63,15 +65,18 @@ Execute them and see the result in the browser.
 ## Install
 
 Requirements:
-* go
-* ledger (Only required when you use scripts)
- 
+
+- go
+- ledger (Only required when you use scripts)
+
 Install requirements on Debian / Ubuntu based distro:
+
 ```
 sudo apt install golang ledger
 ```
 
 Install requirements on Arch based distro:
+
 ```
 sudo pacman -S golang ledger
 ```
@@ -79,7 +84,7 @@ sudo pacman -S golang ledger
 Clone the repo
 
 ```
-git clone https://github.com/lancatlin/ledger-quicknote.git
+git clone https://github.com/lancatlin/lazy-finance.git
 ```
 
 ```
@@ -87,8 +92,7 @@ go build
 ```
 
 ```
-./ledger-quicknote
+./lazy-finance
 ```
 
 Checkout `deployment/` for Nginx & Systemd example configuration.
-

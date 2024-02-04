@@ -4,15 +4,33 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "github.com/lancatlin/lazy-finance/docs"
 )
 
 func router() *gin.Engine {
 	r := gin.Default()
 	r.HTMLRender = loadTemplates("templates")
 
+	// Error handling middleware
+	r.Use(func(c *gin.Context) {
+		c.Next() // process request
+
+		// Check if there's an error
+		if len(c.Errors) > 0 {
+			// Use the last error as it's the most recent one
+			err := c.Errors.Last().Err
+			c.JSON(c.Writer.Status(), gin.H{"message": err.Error()})
+		}
+	})
+
 	r.GET("/", func(c *gin.Context) {
 		c.Redirect(303, "/dashboard")
 	})
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.GET("/signup", func(c *gin.Context) {
 		HTML(c, 200, "signup.html", nil)
@@ -32,6 +50,7 @@ func router() *gin.Engine {
 
 	authApi.GET("/queries", getQueries)
 	authApi.GET("/templates", getTemplates)
+	authApi.POST("/new", newTx)
 
 	authZone := r.Group("", authenticate)
 

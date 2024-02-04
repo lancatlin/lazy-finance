@@ -143,15 +143,6 @@ func (u *User) templates() (templates []string, err error) {
 	return
 }
 
-type TxData struct {
-	Action      string `form:"action" binding:"required"`
-	Name        string `form:"name"`
-	Date        string
-	Amount      string `form:"amount" binding:"required"`
-	Destination string `form:"dest"`
-	Source      string `form:"src"`
-}
-
 func (u *User) newTx(data TxData) (result string, err error) {
 	data.Date = time.Now().Format("2006/01/02")
 	var buf bytes.Buffer

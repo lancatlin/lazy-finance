@@ -9,7 +9,7 @@ import (
 
 	"github.com/gorilla/securecookie"
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/lancatlin/ledger-quicknote/auth"
+	"github.com/lancatlin/lazy-finance/auth"
 )
 
 const QUERIES_FILE = "queries.txt"

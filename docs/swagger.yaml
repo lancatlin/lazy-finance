@@ -1,0 +1,128 @@
+basePath: /api
+definitions:
+  main.Error:
+    properties:
+      message:
+        type: string
+    type: object
+  main.Query:
+    properties:
+      name:
+        type: string
+      query:
+        type: string
+    required:
+    - name
+    - query
+    type: object
+  main.TxData:
+    properties:
+      action:
+        type: string
+      amount:
+        type: string
+      date:
+        type: string
+      dest:
+        type: string
+      name:
+        type: string
+      src:
+        type: string
+    required:
+    - action
+    - amount
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /new:
+    post:
+      consumes:
+      - application/json
+      description: create a new transaction
+      parameters:
+      - description: Transaction Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/main.TxData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns new transaction
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.Error'
+      summary: New Transaction
+      tags:
+      - transactions
+  /queries:
+    get:
+      consumes:
+      - application/json
+      description: get queries for a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns user queries
+          schema:
+            items:
+              $ref: '#/definitions/main.Query'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.Error'
+      summary: Get Queries
+      tags:
+      - queries
+  /templates:
+    get:
+      consumes:
+      - application/json
+      description: get templates for a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns user templates
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.Error'
+      summary: Get Templates
+      tags:
+      - templates
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

@@ -5,8 +5,8 @@ Description=Ledger Quick Note
 Type=simple
 User=www-data
 Group=www-data
-WorkingDirectory=/path/to/ledger-quicknote
-ExecStart=/path/to/ledger-quicknote/ledger-quicknote -f /path/to/ledger/journal.txt -w /path/to/ledger
+WorkingDirectory=/path/to/lazy-finance
+ExecStart=/path/to/lazy-finance/lazy-finance -f /path/to/ledger/journal.txt -w /path/to/ledger
 
 [Install]
 WantedBy=multi-user.target
