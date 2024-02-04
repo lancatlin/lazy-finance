@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/gorilla/securecookie"
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/lancatlin/ledger-quicknote/auth"
 )
 

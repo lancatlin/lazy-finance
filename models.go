@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -54,7 +53,7 @@ func (u *User) WriteFile(name string) (*os.File, error) {
 func (u *User) List() ([]string, error) {
 	files, err := os.ReadDir(u.Dir())
 	if err != nil {
-		return []string{}, fmt.Errorf("Failed to open directory: %w", err)
+		return []string{}, fmt.Errorf("failed to open directory: %w", err)
 	}
 	result := make([]string, len(files))
 	for i, v := range files {
@@ -69,7 +68,7 @@ func (u *User) readAllFile(name string) (data []byte, err error) {
 		return
 	}
 	defer f.Close()
-	data, err = ioutil.ReadAll(f)
+	data, err = io.ReadAll(f)
 	return
 }
 
@@ -112,7 +111,7 @@ func (u *User) query(query string) (result string, err error) {
 func (u *User) queries() (queries [][2]string, err error) {
 	f, err := u.ReadFile(QUERIES_FILE)
 	if err != nil {
-		err = fmt.Errorf("Failed to read queries file: %w", err)
+		err = fmt.Errorf("failed to read queries file: %w", err)
 		return
 	}
 	defer f.Close()

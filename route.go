@@ -26,6 +26,13 @@ func router() *gin.Engine {
 
 	r.POST("/signin", signin)
 
+	api := r.Group("/api")
+
+	authApi := api.Group("", authenticate)
+
+	authApi.GET("/queries", getQueries)
+	authApi.GET("/templates", getTemplates)
+
 	authZone := r.Group("", authenticate)
 
 	authZone.GET("/dashboard", func(c *gin.Context) {
