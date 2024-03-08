@@ -65,3 +65,21 @@ func newTx(c *gin.Context) {
 	}
 	c.JSON(200, tx)
 }
+
+// @Summary      Get Transactions
+// @Description  get transactions for a user
+// @Tags         transactions
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}  model.Transaction  "Returns user transactions"
+// @Failure      500  {object}  Error  "Internal Server Error"
+// @Router       /txs [get]
+func getTxs(c *gin.Context) {
+	user := getUser(c)
+	txs, err := user.txs()
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+	c.JSON(200, txs)
+}

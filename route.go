@@ -49,6 +49,7 @@ func router() *gin.Engine {
 	authApi.GET("/queries", getQueries)
 	authApi.GET("/templates", getTemplates)
 	authApi.POST("/txs", newTx)
+	authApi.GET("/txs", getTxs)
 
 	authZone := r.Group("", authenticate)
 

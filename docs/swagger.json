@@ -83,6 +83,36 @@
             }
         },
         "/txs": {
+            "get": {
+                "description": "get transactions for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get Transactions",
+                "responses": {
+                    "200": {
+                        "description": "Returns user transactions",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Transaction"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.Error"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "create a new transaction",
                 "consumes": [

@@ -72,7 +72,15 @@ func (tx Transaction) Generate() (string, error) {
 	return buf.String(), nil
 }
 
-func FromRegisters(registers []Register) ([]Transaction, error) {
+func LoadTransactions(input string) ([]Transaction, error) {
+	registers, err := LoadRegisters(input)
+	if err != nil {
+		return nil, err
+	}
+	return fromRegisters(registers)
+}
+
+func fromRegisters(registers []Register) ([]Transaction, error) {
 	var transactionsMap = make(map[int]*Transaction)
 	for _, reg := range registers {
 		acc, err := reg.ToAccount()

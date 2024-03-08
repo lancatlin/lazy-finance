@@ -95,6 +95,26 @@ paths:
       tags:
       - templates
   /txs:
+    get:
+      consumes:
+      - application/json
+      description: get transactions for a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns user transactions
+          schema:
+            items:
+              $ref: '#/definitions/model.Transaction'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.Error'
+      summary: Get Transactions
+      tags:
+      - transactions
     post:
       consumes:
       - application/json

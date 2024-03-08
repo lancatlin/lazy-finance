@@ -13,6 +13,14 @@ type Command struct {
 	Input   io.Reader
 }
 
+func NewCommand(command string, dir string, input io.Reader) Command {
+	return Command{
+		Command: command,
+		Dir:     dir,
+		Input:   input,
+	}
+}
+
 func (c Command) genArgs() []string {
 	args := []string{"-f-", c.Command, "-O", "csv"}
 	return args

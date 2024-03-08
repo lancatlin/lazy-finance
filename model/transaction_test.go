@@ -103,7 +103,7 @@ func TestFromRegisters(t *testing.T) {
 		},
 	}
 
-	transactions, err := FromRegisters(registers)
+	transactions, err := fromRegisters(registers)
 	assertNil(t, err)
 
 	expectedTransactions := []Transaction{

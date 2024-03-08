@@ -10,6 +10,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/lancatlin/lazy-finance/ledger"
 	"github.com/lancatlin/lazy-finance/model"
 	cp "github.com/otiai10/copy"
 )
@@ -162,4 +163,17 @@ func (u *User) newTx(tx model.Transaction) error {
 		return err
 	}
 	return nil
+}
+
+func (u *User) txs() ([]model.Transaction, error) {
+	f, err := u.ReadFile(DEFAULT_JOURNAL)
+	if err != nil {
+		return nil, err
+	}
+	command := ledger.NewCommand("reg", u.Dir(), f)
+	output, err := command.Execute()
+	if err != nil {
+		return nil, err
+	}
+	return model.LoadTransactions(output)
 }
