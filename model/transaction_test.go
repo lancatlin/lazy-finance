@@ -27,6 +27,7 @@ func TestGenTransactionText(t *testing.T) {
 	expectedTx := `2024/01/01 restaurant
   expenses:food  100 $
   asset:cash
+
 `
 	actualTx, err := transaction.Generate()
 	assertEqual(t, expectedTx, actualTx)

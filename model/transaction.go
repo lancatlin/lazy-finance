@@ -15,7 +15,8 @@ type Transaction struct {
 
 const txTemplate = `{{.Date.Format "2006/01/02" }} {{.Name}}
 {{range .Accounts}}  {{.Name}}{{ if ne .Amount 0.0 }}  {{.Amount}} {{.Commodity}}{{end}}
-{{end}}`
+{{end}}
+`
 
 func (tx Transaction) Validate() error {
 	errorList := make([]error, 0)
