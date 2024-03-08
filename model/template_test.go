@@ -49,6 +49,12 @@ func assertNil(t *testing.T, value interface{}) {
 	}
 }
 
+func assertEqual[T comparable](t *testing.T, expected, actual T) {
+	if expected != actual {
+		t.Errorf("Expected [%+v], got [%+v]", expected, actual)
+	}
+}
+
 func assertDeepEqual(t *testing.T, expected, actual interface{}) {
 	if !reflect.DeepEqual(expected, actual) {
 		t.Errorf("Expected and actual do not match. Expected: [%+v], got: [%+v]", expected, actual)

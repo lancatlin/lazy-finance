@@ -5,7 +5,7 @@ const api = axios.create({
   timeout: 2000,
 });
 
-export async function getTemplates() {
+export async function getTemplates(): Promise<Template[]> {
   const response = await api.get("/templates");
   console.log(response.data);
   return response.data;
