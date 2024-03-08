@@ -1,30 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Transaction } from "../models/types";
+import { getTxs } from "../utils/api";
 
-// convert iso date to Date
-function convertDate(date: string) {
-  return new Date(date);
-}
+const transactions = ref<Transaction[]>([]);
 
-const transactions = ref<Transaction[]>([
-  {
-    name: "test",
-    date: convertDate("2021-01-01"),
-    accounts: [
-      {
-        name: "expenses",
-        amount: 100,
-        commodity: "$",
-      },
-      {
-        name: "assets",
-        amount: -100,
-        commodity: "$",
-      },
-    ],
-  },
-]);
+onMounted(async () => {
+  const txs = await getTxs();
+  transactions.value = txs;
+});
 </script>
 <template>
   <div class="flex flex-col items-center">

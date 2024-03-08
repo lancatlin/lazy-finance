@@ -25,3 +25,12 @@ export async function newTx(data: Transaction): Promise<Transaction> {
     throw error; // Rethrow error if it's not the specific 400 error we're checking for or if it's a different kind of error
   }
 }
+
+export async function getTxs(): Promise<Transaction[]> {
+  const response = await api.get<Transaction[]>("/txs");
+  const txs = response.data;
+  return txs.map((tx) => ({
+    ...tx,
+    date: new Date(tx.date),
+  }));
+}
