@@ -71,3 +71,30 @@ func (tx Transaction) Generate() (string, error) {
 
 	return buf.String(), nil
 }
+
+func FromRegisters(registers []Register) ([]Transaction, error) {
+	var transactionsMap = make(map[int]*Transaction)
+	for _, reg := range registers {
+		acc, err := reg.ToAccount()
+		if err != nil {
+			return nil, err
+		}
+
+		if txn, exists := transactionsMap[reg.TxnIdx]; exists {
+			txn.Accounts = append(txn.Accounts, acc)
+		} else {
+			transactionsMap[reg.TxnIdx] = &Transaction{
+				Name:     reg.Description,
+				Date:     reg.Date,
+				Accounts: []Account{acc},
+			}
+		}
+	}
+
+	var transactions []Transaction
+	for _, txn := range transactionsMap {
+		transactions = append(transactions, *txn)
+	}
+
+	return transactions, nil
+}

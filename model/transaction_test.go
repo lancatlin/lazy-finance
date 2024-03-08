@@ -66,3 +66,80 @@ func TestValidateTransaction(t *testing.T) {
 		}
 	}
 }
+
+func TestFromRegisters(t *testing.T) {
+	registers := []Register{
+		{
+			TxnIdx:      1,
+			Date:        MustParseTime("2024-01-01"),
+			Description: "restaurant",
+			Account:     "expenses:food",
+			Amount:      "$100",
+			Total:       "$100",
+		},
+		{
+			TxnIdx:      1,
+			Date:        MustParseTime("2024-01-01"),
+			Description: "restaurant",
+			Account:     "asset:cash",
+			Amount:      "-$100",
+			Total:       "$0",
+		},
+		{
+			TxnIdx:      2,
+			Date:        MustParseTime("2024-01-02"),
+			Description: "groceries",
+			Account:     "expenses:groceries",
+			Amount:      "$50",
+			Total:       "$50",
+		},
+		{
+			TxnIdx:      2,
+			Date:        MustParseTime("2024-01-02"),
+			Description: "groceries",
+			Account:     "asset:cash",
+			Amount:      "-$50",
+			Total:       "$0",
+		},
+	}
+
+	transactions, err := FromRegisters(registers)
+	assertNil(t, err)
+
+	expectedTransactions := []Transaction{
+		{
+			Name: "restaurant",
+			Date: MustParseTime("2024-01-01"),
+			Accounts: []Account{
+				{
+					Name:      "expenses:food",
+					Amount:    100,
+					Commodity: "$",
+				},
+				{
+					Name:      "asset:cash",
+					Amount:    -100,
+					Commodity: "$",
+				},
+			},
+		},
+		{
+			Name: "groceries",
+			Date: MustParseTime("2024-01-02"),
+			Accounts: []Account{
+				{
+					Name:      "expenses:groceries",
+					Amount:    50,
+					Commodity: "$",
+				},
+				{
+					Name:      "asset:cash",
+					Amount:    -50,
+					Commodity: "$",
+				},
+			},
+		},
+	}
+
+	assertDeepEqual(t, expectedTransactions, transactions)
+}
