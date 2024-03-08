@@ -1,26 +1,31 @@
 package ledger
 
+import (
+	"fmt"
+	"io"
+	"log"
+	"os/exec"
+)
+
 type Command struct {
 	Command string
 	Dir     string
-	Files   []string
+	Input   io.Reader
 }
 
 func (c Command) genArgs() []string {
-	args := make([]string, 0)
-	for _, file := range c.Files {
-		args = append(args, "-f", file)
-	}
-	args = append(args, c.Command)
+	args := []string{"-f-", c.Command, "-O", "csv"}
 	return args
 }
 
-// func (c LedgerCommand) Execute() (string, error) {
-// 	cmd := exec.Command("hledger", c.Command)
-// 	cmd.Dir = c.Dir
-// 	out, err := cmd.CombinedOutput()
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	return string(out), nil
-// }
+func (c Command) Execute() (string, error) {
+	cmd := exec.Command("hledger", c.genArgs()...)
+	log.Println(cmd.Args)
+	cmd.Dir = c.Dir
+	cmd.Stdin = c.Input
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("%w: %s", err, out)
+	}
+	return string(out), nil
+}
