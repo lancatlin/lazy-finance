@@ -54,8 +54,12 @@ func ConvertAmount(money string) (float64, string, error) {
 	var commodity string
 	var err error
 
-	// Remove the dollar sign if present and set commodity to USD
-	if strings.HasPrefix(money, "$") {
+	// Handle cases with a negative sign before the dollar sign
+	if strings.HasPrefix(money, "-$") {
+		commodity = "$"
+		money = "-" + strings.TrimPrefix(money, "-$")
+	} else if strings.HasPrefix(money, "$") {
+		// Remove the dollar sign if present and set commodity to USD
 		commodity = "$"
 		money = strings.TrimPrefix(money, "$")
 	} else {

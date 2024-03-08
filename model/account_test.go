@@ -15,6 +15,7 @@ func TestConvertAmount(t *testing.T) {
 		{"100.5 USD", 100.5, "USD", false},
 		{"100.5 $", 100.5, "$", false},
 		{"$-100.5", -100.5, "$", false},
+		{"-$100.5", -100.5, "$", false},
 		{"-100 USD", -100, "USD", false},
 		{"", 0, "", true},
 		{"100.5.5 USD", 0, "", true},
