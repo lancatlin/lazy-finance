@@ -3,6 +3,8 @@ package model
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenTransactionText(t *testing.T) {
@@ -104,7 +106,7 @@ func TestFromRegisters(t *testing.T) {
 	}
 
 	transactions, err := fromRegisters(registers)
-	assertNil(t, err)
+	assert.NoError(t, err)
 
 	expectedTransactions := []Transaction{
 		{
@@ -141,5 +143,5 @@ func TestFromRegisters(t *testing.T) {
 		},
 	}
 
-	assertDeepEqual(t, expectedTransactions, transactions)
+	assert.Equal(t, expectedTransactions, transactions)
 }

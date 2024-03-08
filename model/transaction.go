@@ -81,27 +81,24 @@ func LoadTransactions(input string) ([]Transaction, error) {
 }
 
 func fromRegisters(registers []Register) ([]Transaction, error) {
-	var transactionsMap = make(map[int]*Transaction)
+	var transactions = make([]Transaction, 0, len(registers)/2)
 	for _, reg := range registers {
 		acc, err := reg.ToAccount()
 		if err != nil {
 			return nil, err
 		}
 
-		if txn, exists := transactionsMap[reg.TxnIdx]; exists {
-			txn.Accounts = append(txn.Accounts, acc)
-		} else {
-			transactionsMap[reg.TxnIdx] = &Transaction{
+		idx := reg.TxnIdx - 1
+
+		if idx >= len(transactions) {
+			transactions = append(transactions, Transaction{
 				Name:     reg.Description,
 				Date:     reg.Date,
 				Accounts: []Account{acc},
-			}
+			})
+		} else {
+			transactions[idx].Accounts = append(transactions[idx].Accounts, acc)
 		}
-	}
-
-	var transactions []Transaction
-	for _, txn := range transactionsMap {
-		transactions = append(transactions, *txn)
 	}
 
 	return transactions, nil
