@@ -2,6 +2,7 @@ package model
 
 import (
 	"bytes"
+	"fmt"
 	"text/template"
 	"time"
 )
@@ -15,6 +16,45 @@ type Transaction struct {
 const txTemplate = `{{.Date.Format "2006-01-02" }} {{.Name}}
 {{range .Accounts}}  {{.Name}}{{ if ne .Amount 0.0 }}  {{.Amount}} {{.Commodity}}{{end}}
 {{end}}`
+
+func (tx Transaction) Validate() error {
+	errorList := make([]error, 0)
+	if tx.Name == "" {
+		errorList = append(errorList, fmt.Errorf("name is required"))
+	}
+	if len(tx.Accounts) < 2 {
+		errorList = append(errorList, fmt.Errorf("at least two accounts are required"))
+	}
+	sum := 0.0
+	zeroCount := 0
+	for _, account := range tx.Accounts {
+		if account.Name == "" {
+			errorList = append(errorList, fmt.Errorf("account names are required"))
+		}
+		if account.Amount == 0.0 {
+			zeroCount++
+		}
+		sum += account.Amount
+	}
+	if zeroCount > 1 {
+		errorList = append(errorList, fmt.Errorf("only one zero amount is allowed"))
+	}
+	if zeroCount == 0 && sum != 0.0 {
+		errorList = append(errorList, fmt.Errorf("amounts must sum to 0"))
+	}
+	if len(errorList) > 0 {
+		return genErrorMsg(errorList)
+	}
+	return nil
+}
+
+func genErrorMsg(errorList []error) error {
+	errorMsg := ""
+	for _, err := range errorList {
+		errorMsg += err.Error() + ". "
+	}
+	return fmt.Errorf(errorMsg)
+}
 
 func (tx Transaction) Generate() (string, error) {
 	buf := new(bytes.Buffer)

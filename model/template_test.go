@@ -49,6 +49,12 @@ func assertNil(t *testing.T, value interface{}) {
 	}
 }
 
+func assertNotNil(t *testing.T, value interface{}) {
+	if value == nil {
+		t.Fatalf("Expected not nil, got [%+v]", value)
+	}
+}
+
 func assertEqual[T comparable](t *testing.T, expected, actual T) {
 	if expected != actual {
 		t.Errorf("Expected [%+v], got [%+v]", expected, actual)
