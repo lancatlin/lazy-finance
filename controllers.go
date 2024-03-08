@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/lancatlin/lazy-finance/model"
 )
 
 // @Summary      Get Queries
@@ -40,28 +41,27 @@ func getTemplates(c *gin.Context) {
 	c.JSON(200, templates)
 }
 
-
 // @Summary      New Transaction
 // @Description  create a new transaction
 // @Tags         transactions
 // @Accept       json
 // @Produce      json
-// @Param        data  body      TxData  true  "Transaction Data"
+// @Param        data  body      model.Transaction  true  "Transaction Data"
 // @Success      200  {object}  string "Returns new transaction"
 // @Failure      400  {object}  Error  "Bad Request"
 // @Failure      500  {object}  Error  "Internal Server Error"
-// @Router       /new [post]
+// @Router       /txs [post]
 func newTx(c *gin.Context) {
-	var data TxData
-	if err := c.ShouldBind(&data); err != nil {
+	var tx model.Transaction
+	if err := c.ShouldBind(&tx); err != nil {
 		c.AbortWithError(400, err)
 		return
 	}
 	user := getUser(c)
-	tx, err := user.newTx(data)
+	err := user.newTx(tx)
 	if err != nil {
-		c.AbortWithError(500, err)
+		c.AbortWithError(400, err)
 		return
 	}
-	c.JSON(200, gin.H{ "tx": tx })
+	c.JSON(200, tx)
 }

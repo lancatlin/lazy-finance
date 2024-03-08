@@ -24,52 +24,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/new": {
-            "post": {
-                "description": "create a new transaction",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "transactions"
-                ],
-                "summary": "New Transaction",
-                "parameters": [
-                    {
-                        "description": "Transaction Data",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/main.TxData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns new transaction",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/main.Error"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/main.Error"
-                        }
-                    }
-                }
-            }
-        },
         "/queries": {
             "get": {
                 "description": "get queries for a user",
@@ -133,6 +87,52 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/txs": {
+            "post": {
+                "description": "create a new transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "New Transaction",
+                "parameters": [
+                    {
+                        "description": "Transaction Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns new transaction",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/main.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.Error"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -159,29 +159,33 @@ const docTemplate = `{
                 }
             }
         },
-        "main.TxData": {
+        "model.Account": {
             "type": "object",
-            "required": [
-                "action",
-                "amount"
-            ],
             "properties": {
-                "action": {
-                    "type": "string"
-                },
                 "amount": {
-                    "type": "string"
+                    "type": "number"
                 },
-                "date": {
-                    "type": "string"
-                },
-                "dest": {
+                "commodity": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "model.Transaction": {
+            "type": "object",
+            "properties": {
+                "accounts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Account"
+                    }
                 },
-                "src": {
+                "date": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

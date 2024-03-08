@@ -9,8 +9,6 @@ import (
 	"os/exec"
 	"path"
 	"strings"
-	"text/template"
-	"time"
 
 	"github.com/lancatlin/lazy-finance/model"
 	cp "github.com/otiai10/copy"
@@ -151,14 +149,17 @@ func (u *User) templates() (templates []model.Template, err error) {
 	return templates, nil
 }
 
-func (u *User) newTx(data TxData) (result string, err error) {
-	data.Date = time.Now().Format("2006/01/02")
-	var buf bytes.Buffer
-	tpl, err := template.ParseFiles(u.FilePath(data.Action))
-	if err != nil {
-		return
+func (u *User) newTx(tx model.Transaction) error {
+	if err := tx.Validate(); err != nil {
+		return err
 	}
-	err = tpl.ExecuteTemplate(&buf, data.Action, data)
-	result = buf.String()
-	return
+	txString, err := tx.Generate()
+	if err != nil {
+		return err
+	}
+	err = u.appendToFile(txString)
+	if err != nil {
+		return err
+	}
+	return nil
 }

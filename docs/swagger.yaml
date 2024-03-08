@@ -15,23 +15,25 @@ definitions:
     - name
     - query
     type: object
-  main.TxData:
+  model.Account:
     properties:
-      action:
-        type: string
       amount:
-        type: string
-      date:
-        type: string
-      dest:
+        type: number
+      commodity:
         type: string
       name:
         type: string
-      src:
+    type: object
+  model.Transaction:
+    properties:
+      accounts:
+        items:
+          $ref: '#/definitions/model.Account'
+        type: array
+      date:
         type: string
-    required:
-    - action
-    - amount
+      name:
+        type: string
     type: object
 externalDocs:
   description: OpenAPI
@@ -50,36 +52,6 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
-  /new:
-    post:
-      consumes:
-      - application/json
-      description: create a new transaction
-      parameters:
-      - description: Transaction Data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/main.TxData'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Returns new transaction
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/main.Error'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/main.Error'
-      summary: New Transaction
-      tags:
-      - transactions
   /queries:
     get:
       consumes:
@@ -122,6 +94,36 @@ paths:
       summary: Get Templates
       tags:
       - templates
+  /txs:
+    post:
+      consumes:
+      - application/json
+      description: create a new transaction
+      parameters:
+      - description: Transaction Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Transaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns new transaction
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.Error'
+      summary: New Transaction
+      tags:
+      - transactions
 securityDefinitions:
   BasicAuth:
     type: basic

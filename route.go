@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -50,7 +48,7 @@ func router() *gin.Engine {
 
 	authApi.GET("/queries", getQueries)
 	authApi.GET("/templates", getTemplates)
-	authApi.POST("/new", newTx)
+	authApi.POST("/txs", newTx)
 
 	authZone := r.Group("", authenticate)
 
@@ -72,23 +70,23 @@ func router() *gin.Engine {
 		})
 	})
 
-	authZone.POST("/new", func(c *gin.Context) {
-		var data TxData
-		if err := c.ShouldBind(&data); err != nil {
-			c.AbortWithError(400, err)
-			return
-		}
-		user := getUser(c)
-		tx, err := user.newTx(data)
-		if err != nil {
-			c.AbortWithError(400, err)
-			log.Println(err, c.Request.Form)
-			return
-		}
-		HTML(c, 200, "new.html", gin.H{
-			"Tx": tx,
-		})
-	})
+	// authZone.POST("/new", func(c *gin.Context) {
+	// 	var data TxData
+	// 	if err := c.ShouldBind(&data); err != nil {
+	// 		c.AbortWithError(400, err)
+	// 		return
+	// 	}
+	// 	user := getUser(c)
+	// 	err := user.newTx(data)
+	// 	if err != nil {
+	// 		c.AbortWithError(400, err)
+	// 		log.Println(err, c.Request.Form)
+	// 		return
+	// 	}
+	// 	HTML(c, 200, "new.html", gin.H{
+	// 		"Tx": tx,
+	// 	})
+	// })
 	authZone.POST("/submit", func(c *gin.Context) {
 		user := getUser(c)
 		tx := c.PostForm("tx")

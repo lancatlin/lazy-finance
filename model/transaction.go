@@ -13,7 +13,7 @@ type Transaction struct {
 	Accounts []Account `json:"accounts"`
 }
 
-const txTemplate = `{{.Date.Format "2006-01-02" }} {{.Name}}
+const txTemplate = `{{.Date.Format "2006/01/02" }} {{.Name}}
 {{range .Accounts}}  {{.Name}}{{ if ne .Amount 0.0 }}  {{.Amount}} {{.Commodity}}{{end}}
 {{end}}`
 
