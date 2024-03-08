@@ -21,7 +21,7 @@ func TestLoadTemplates(t *testing.T) {
 		}
 	]	
 }]`
-	templates, err := loadTemplates(templateString)
+	templates, err := LoadTemplates(templateString)
 	assertNil(t, err)
 	expectedTemplates := []Template{
 		{

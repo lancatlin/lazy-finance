@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Template } from "../models/types";
 
 const api = axios.create({
   baseURL: "/api",
@@ -6,7 +7,6 @@ const api = axios.create({
 });
 
 export async function getTemplates(): Promise<Template[]> {
-  const response = await api.get("/templates");
-  console.log(response.data);
+  const response = await api.get<Template[]>("/templates");
   return response.data;
 }

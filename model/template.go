@@ -7,7 +7,7 @@ type Template struct {
 	Accounts []Account `json:"accounts"`
 }
 
-func loadTemplates(input string) (templates []Template, err error) {
+func LoadTemplates(input string) (templates []Template, err error) {
 	err = json.Unmarshal([]byte(input), &templates)
 	return
 }

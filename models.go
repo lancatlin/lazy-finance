@@ -12,6 +12,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/lancatlin/lazy-finance/model"
 	cp "github.com/otiai10/copy"
 )
 
@@ -130,17 +131,24 @@ func (u *User) queries() (queries [][2]string, err error) {
 	return
 }
 
-func (u *User) templates() (templates []string, err error) {
-	files, err := u.List()
+func (u *User) templates() (templates []model.Template, err error) {
+	f, err := u.ReadFile("templates.json")
 	if err != nil {
-		return
+		return nil, fmt.Errorf("failed to read templates.json: %w", err)
 	}
-	for _, v := range files {
-		if strings.HasSuffix(v, ".tpl") {
-			templates = append(templates, v)
-		}
+	defer f.Close()
+
+	var buf bytes.Buffer
+	_, err = buf.ReadFrom(f)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read from buffer: %w", err)
 	}
-	return
+
+	templates, err = model.LoadTemplates(buf.String())
+	if err != nil {
+		return nil, fmt.Errorf("failed to load templates: %w", err)
+	}
+	return templates, nil
 }
 
 func (u *User) newTx(data TxData) (result string, err error) {

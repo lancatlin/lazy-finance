@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
-import { Account, Template } from "../models/types";
+import { Account, Template, defaultTemplate } from "../models/types";
 import { getTemplates } from "../utils/api";
 import validate from "../models/validate";
 
 const name = ref<string>("");
-const templateId = ref<string>("default");
+const selectedTemplate = ref<Template>(defaultTemplate);
 const errorMessage = ref<string>("");
 
-const template: Template = {
-  accounts: [
-    { name: "expenses", commodity: "$", amount: 50 },
-    { name: "assets:cash", commodity: "$", amount: null },
-  ],
-};
+const templates = ref<Template[]>([]);
 
 onMounted(async () => {
-  const templates = await getTemplates();
-  console.log(templates);
+  templates.value = [defaultTemplate, ...(await getTemplates())];
+  console.log(templates.value);
 });
 
 const accounts = reactive<Account[]>([
@@ -38,7 +33,7 @@ const onSubmit = () => {
     const result = validate({
       accounts,
       name: name.value,
-      template,
+      template: selectedTemplate.value,
     });
     console.log(result);
     console.log("Submitted successfully");
@@ -59,12 +54,17 @@ const onSubmit = () => {
           >Template:
         </label>
         <select
-          v-model="templateId"
+          v-model="selectedTemplate"
           id="template"
           class="bg-gray-50 border rounded"
         >
-          <option>default</option>
-          <option>restaurant</option>
+          <option
+            v-for="template in templates"
+            :key="template.name"
+            :value="template"
+          >
+            {{ template.name }}
+          </option>
         </select>
       </div>
       <div class="mb-6">
@@ -97,7 +97,7 @@ const onSubmit = () => {
               type="text"
               :id="`account-${index}-name`"
               v-model="account.name"
-              :placeholder="template.accounts[index]?.name"
+              :placeholder="selectedTemplate?.accounts[index]?.name"
               class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
             />
           </div>
@@ -113,7 +113,9 @@ const onSubmit = () => {
               type="number"
               :id="`account-${index}-amount`"
               v-model="account.amount"
-              :placeholder="template.accounts[index]?.amount?.toString()"
+              :placeholder="
+                selectedTemplate?.accounts[index]?.amount?.toString()
+              "
               class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
             />
           </div>
@@ -129,7 +131,7 @@ const onSubmit = () => {
               type="text"
               :id="`account-${index}-commodity`"
               v-model="account.commodity"
-              :placeholder="template.accounts[index]?.commodity"
+              :placeholder="selectedTemplate?.accounts[index]?.commodity"
               class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
             />
           </div>
