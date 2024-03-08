@@ -4,10 +4,12 @@ import { Account, Template, defaultTemplate } from "../models/types";
 import { getTemplates } from "../utils/api";
 import { applyTemplate } from "../models/validate";
 import { newTx } from "../utils/api";
+import { useToast } from "vue-toast-notification";
+
+const toast = useToast();
 
 const name = ref<string>("");
 const selectedTemplate = ref<Template>(defaultTemplate);
-const errorMessage = ref<string>("");
 
 const templates = ref<Template[]>([]);
 
@@ -38,6 +40,16 @@ const removeAccount = (index: number) => {
   accounts.splice(index, 1);
 };
 
+const clearForm = () => {
+  accounts.splice(
+    0,
+    accounts.length,
+    { name: "", amount: 0, commodity: "" },
+    { name: "", amount: 0, commodity: "" }
+  );
+  name.value = "";
+};
+
 const onSubmit = async () => {
   try {
     const result = applyTemplate(
@@ -52,10 +64,11 @@ const onSubmit = async () => {
     console.log("Submitted successfully");
     const tx = await newTx(result);
     console.log(tx);
-    errorMessage.value = "";
+    toast.success(`Transaction "${tx.name}" created`);
+    clearForm();
   } catch (e) {
     console.error(e);
-    errorMessage.value = e as string; // Cast error to string to satisfy the type of errorMessage
+    toast.error(e as string); // Cast error to string to satisfy the type of errorMessage
     return;
   }
 };
@@ -171,14 +184,6 @@ const onSubmit = async () => {
       >
         Add Account
       </button>
-
-      <!-- Error message -->
-      <div
-        v-if="errorMessage"
-        class="mt-4 text-red-600 border border-red-600 p-3 rounded"
-      >
-        {{ errorMessage }}
-      </div>
 
       <!-- Submit -->
       <button
