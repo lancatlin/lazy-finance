@@ -1,6 +1,6 @@
 export interface Account {
   name: string;
-  amount: number | null;
+  amount: number;
   commodity: string;
 }
 
@@ -11,8 +11,8 @@ export interface Template {
 
 export interface Transaction {
   name: string;
+  date: Date;
   accounts: Account[];
-  template: Template;
 }
 
 export const defaultTemplate: Template = {

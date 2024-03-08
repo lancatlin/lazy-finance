@@ -2,7 +2,8 @@
 import { ref, reactive, onMounted } from "vue";
 import { Account, Template, defaultTemplate } from "../models/types";
 import { getTemplates } from "../utils/api";
-import validate from "../models/validate";
+import { applyTemplate } from "../models/validate";
+import { newTx } from "../utils/api";
 
 const name = ref<string>("");
 const selectedTemplate = ref<Template>(defaultTemplate);
@@ -16,27 +17,32 @@ onMounted(async () => {
 });
 
 const accounts = reactive<Account[]>([
-  { name: "", amount: null, commodity: "" },
-  { name: "", amount: null, commodity: "" },
+  { name: "", amount: 0, commodity: "" },
+  { name: "", amount: 0, commodity: "" },
 ]);
 
 const addAccount = () => {
-  accounts.push({ name: "", amount: null, commodity: "" });
+  accounts.push({ name: "", amount: 0, commodity: "" });
 };
 
 const removeAccount = (index: number) => {
   accounts.splice(index, 1);
 };
 
-const onSubmit = () => {
+const onSubmit = async () => {
   try {
-    const result = validate({
-      accounts,
-      name: name.value,
-      template: selectedTemplate.value,
-    });
+    const result = applyTemplate(
+      {
+        accounts,
+        date: new Date(),
+        name: name.value,
+      },
+      selectedTemplate.value
+    );
     console.log(result);
     console.log("Submitted successfully");
+    const tx = await newTx(result);
+    console.log(tx);
     errorMessage.value = "";
   } catch (e) {
     console.error(e);
