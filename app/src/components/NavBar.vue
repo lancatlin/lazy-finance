@@ -31,10 +31,10 @@
                 >Edit</router-link
               >
               <router-link
-                to="/query"
+                to="/transactions"
                 class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 active-class="text-gray-900"
-                >Query</router-link
+                >Transactions</router-link
               >
             </div>
           </div>
