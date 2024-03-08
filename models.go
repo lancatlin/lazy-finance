@@ -98,7 +98,7 @@ func (u *User) overwriteFile(filename string, tx string) (err error) {
 func (u *User) query(query string) (result string, err error) {
 	var buf bytes.Buffer
 
-	cmd := exec.Command("ledger")
+	cmd := exec.Command("hledger")
 	cmd.Dir = u.Dir()
 	cmd.Stdin = strings.NewReader(query)
 	cmd.Stdout = &buf
