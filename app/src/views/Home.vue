@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { Account, Template } from "../models/types";
+import { getTemplates } from "../utils/api";
 import validate from "../models/validate";
 
 const name = ref<string>("");
@@ -13,6 +14,11 @@ const template: Template = {
     { name: "assets:cash", commodity: "$", amount: null },
   ],
 };
+
+onMounted(async () => {
+  const templates = await getTemplates();
+  console.log(templates);
+});
 
 const accounts = reactive<Account[]>([
   { name: "", amount: null, commodity: "" },

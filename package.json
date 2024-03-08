@@ -9,7 +9,11 @@
   "workspaces": [
     "app"
   ],
-  "scripts": {},
+  "scripts": {
+    "dev:server": "air dev:server",
+    "dev:app": "yarn workspace app dev",
+    "dev": "concurrently \"yarn dev:server\" \"yarn dev:app\""
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
