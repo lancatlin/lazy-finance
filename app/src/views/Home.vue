@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import { Account, Template, defaultTemplate } from "../models/types";
 import { getTemplates } from "../utils/api";
 import { applyTemplate } from "../models/validate";
@@ -20,6 +20,15 @@ const accounts = reactive<Account[]>([
   { name: "", amount: 0, commodity: "" },
   { name: "", amount: 0, commodity: "" },
 ]);
+
+function useAmountBinding(account: Account) {
+  return computed({
+    get: () => (!account.amount ? "" : account.amount.toString()),
+    set: (newValue) => {
+      account.amount = newValue === "" ? 0 : parseFloat(newValue);
+    },
+  });
+}
 
 const addAccount = () => {
   accounts.push({ name: "", amount: 0, commodity: "" });
@@ -118,7 +127,7 @@ const onSubmit = async () => {
             <input
               type="number"
               :id="`account-${index}-amount`"
-              v-model="account.amount"
+              v-model="useAmountBinding(account).value"
               :placeholder="
                 selectedTemplate?.accounts[index]?.amount?.toString()
               "
