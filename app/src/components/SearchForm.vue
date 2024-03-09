@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";
+import { Query } from "../models/types";
 
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: Object as () => Query,
     required: true,
   },
 });
@@ -14,24 +15,24 @@ const handleInput = (callback: (value: string) => void) => (event: Event) => {
   callback((event.target as HTMLInputElement).value);
 };
 
-const updateSearchTerm = (searchTerm?: string) => {
-  emit("update:modelValue", { ...props.modelValue, searchTerm });
+const updateKeyword = (keyword?: string) => {
+  emit("update:modelValue", { ...props.modelValue, keyword });
 };
 
-const updateBeginDate = (beginDate?: string) => {
-  emit("update:modelValue", { ...props.modelValue, beginDate });
+const updateBeginDate = (begin?: string) => {
+  emit("update:modelValue", { ...props.modelValue, begin });
 };
 
-const updateEndDate = (endDate?: string) => {
-  emit("update:modelValue", { ...props.modelValue, endDate });
+const updateEndDate = (end?: string) => {
+  emit("update:modelValue", { ...props.modelValue, end });
 };
 </script>
 
 <template>
   <div class="w-full md:w-2/3 px-3">
     <input
-      :value="modelValue.searchTerm"
-      @input="(event) => handleInput(updateSearchTerm)(event)"
+      :value="modelValue.keyword"
+      @input="(event) => handleInput(updateKeyword)(event)"
       type="text"
       placeholder="Search term"
       class="w-full shadow border rounded p-2 mb-3"
@@ -41,7 +42,7 @@ const updateEndDate = (endDate?: string) => {
         <label for="beginDate" class="text-gray-500">From</label>
         <input
           id="beginDate"
-          :value="modelValue.beginDate"
+          :value="modelValue.begin"
           @input="(event) => handleInput(updateBeginDate)(event)"
           type="date"
           class="w-full shadow border rounded p-2"
@@ -51,7 +52,7 @@ const updateEndDate = (endDate?: string) => {
         <label for="endDate" class="text-gray-500">To</label>
         <input
           id="endDate"
-          :value="modelValue.endDate"
+          :value="modelValue.end"
           @input="(event) => handleInput(updateEndDate)(event)"
           type="date"
           class="w-full shadow border rounded p-2"

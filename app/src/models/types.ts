@@ -35,3 +35,9 @@ export interface Balance {
   account: string;
   balance: string;
 }
+
+export interface Query {
+  keyword: string;
+  begin?: Date;
+  end?: Date;
+}

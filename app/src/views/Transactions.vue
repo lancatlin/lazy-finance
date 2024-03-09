@@ -1,20 +1,27 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { Transaction } from "../models/types";
+import { watch, ref } from "vue";
+import { Transaction, Query } from "../models/types";
 import { getTxs } from "../utils/api";
+import { debounce } from "../utils/debounce";
 import SearchForm from "../components/SearchForm.vue";
 
 const transactions = ref<Transaction[]>([]);
-const searchCriteria = ref({
-  searchTerm: "",
-  beginDate: "",
-  endDate: "",
+const searchCriteria = ref<Query>({
+  keyword: "",
+  begin: undefined,
+  end: undefined,
 });
 
-onMounted(async () => {
-  const txs = await getTxs();
-  transactions.value = txs;
-});
+const debouncedGetTxs = debounce(getTxs, 400);
+
+watch(
+  searchCriteria,
+  async (newCriteria) => {
+    const txs = await debouncedGetTxs(newCriteria);
+    transactions.value = txs;
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
