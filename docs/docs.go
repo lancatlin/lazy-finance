@@ -133,6 +133,28 @@ const docTemplate = `{
                     "transactions"
                 ],
                 "summary": "Get Transactions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "begin",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "command",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "keyword",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Returns user transactions",

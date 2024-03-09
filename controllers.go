@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/lancatlin/lazy-finance/ledger"
 	"github.com/lancatlin/lazy-finance/model"
 )
 
@@ -71,12 +72,18 @@ func newTx(c *gin.Context) {
 // @Tags         transactions
 // @Accept       json
 // @Produce      json
+// @Param        query  query      ledger.Query  false  "Query"
 // @Success      200  {array}  model.Transaction  "Returns user transactions"
 // @Failure      500  {object}  Error  "Internal Server Error"
 // @Router       /txs [get]
 func getTxs(c *gin.Context) {
 	user := getUser(c)
-	txs, err := user.txs()
+	query := ledger.Query{}
+	if err := c.Bind(&query); err != nil {
+		c.AbortWithError(400, err)
+		return
+	}
+	txs, err := user.txs(query)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return

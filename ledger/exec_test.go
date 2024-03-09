@@ -7,19 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGenCommandArgs(t *testing.T) {
-	command := Command{
-		Command: "bal",
-	}
-
-	args := command.genArgs()
-	expectedArgs := []string{"-f-", "bal", "-O", "csv"}
-	assert.Equal(t, expectedArgs, args)
-}
-
 func TestExecuteLedgerCommandBalance(t *testing.T) {
 	command := Command{
-		Command: "bal",
+		Query: Query{
+			Command: "bal",
+		},
 		Input: strings.NewReader(`2024-01-01 restaurant
   Expenses:Food:Restaurant  $10
   Assets:Checking
@@ -37,7 +29,9 @@ func TestExecuteLedgerCommandBalance(t *testing.T) {
 
 func TestExecuteLedgerCommandRegister(t *testing.T) {
 	command := Command{
-		Command: "reg",
+		Query: Query{
+			Command: "reg",
+		},
 		Input: strings.NewReader(`2024-01-01 restaurant
   Expenses:Food:Restaurant  $10
   Assets:Checking

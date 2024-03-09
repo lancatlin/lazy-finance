@@ -8,26 +8,21 @@ import (
 )
 
 type Command struct {
-	Command string
-	Dir     string
-	Input   io.Reader
+	Query
+	Dir   string
+	Input io.Reader
 }
 
-func NewCommand(command string, dir string, input io.Reader) Command {
+func NewCommand(query Query, dir string, input io.Reader) Command {
 	return Command{
-		Command: command,
-		Dir:     dir,
-		Input:   input,
+		Query: query,
+		Dir:   dir,
+		Input: input,
 	}
 }
 
-func (c Command) genArgs() []string {
-	args := []string{"-f-", c.Command, "-O", "csv"}
-	return args
-}
-
 func (c Command) Execute() (string, error) {
-	cmd := exec.Command("hledger", c.genArgs()...)
+	cmd := exec.Command("hledger", c.GetArgs()...)
 	log.Println(cmd.Args)
 	cmd.Dir = c.Dir
 	cmd.Stdin = c.Input
