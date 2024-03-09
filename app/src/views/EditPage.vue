@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Folder } from "../models/types";
-import FileTreeSidebar from "../components/FIleTreeSidebar.vue";
+import FileTreeSidebar from "../components/edit/FileTreeSidebar.vue";
+import EditForm from "../components/edit/EditForm.vue";
 
 const folder = ref<Folder>({
   name: "root",
@@ -35,9 +36,6 @@ const folder = ref<Folder>({
 <template>
   <div class="relative md:flex md:flex-row">
     <FileTreeSidebar />
-    <div>
-      <h1>Edit</h1>
-      <p>Edit page</p>
-    </div>
+    <EditForm />
   </div>
 </template>

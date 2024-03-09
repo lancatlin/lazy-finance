@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import FileTree from "./FileTree.vue";
 import { ref } from "vue";
-import { Folder } from "../models/types";
+import { Folder } from "../../models/types";
 
 const sidebarOpen = ref(false);
 

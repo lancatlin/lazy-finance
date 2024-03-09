@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { Folder, File } from "../models/types";
+import { Folder, File } from "../../models/types";
 
 defineProps<{
   nodes: (Folder | File)[];
