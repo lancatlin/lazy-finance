@@ -1,4 +1,4 @@
-export function debounce<T extends (...args: any[]) => ReturnType<T>>(
+export function debounce<T extends (...args: Parameters<T>) => ReturnType<T>>(
   callback: T,
   wait: number
 ): (...args: Parameters<T>) => Promise<ReturnType<T>> {

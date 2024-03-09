@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
+  "type": "commonjs",
   "repository": "git@github.com:lancatlin/lazy-finance.git",
   "author": "wancat <wancat@wancat.cc>",
   "license": "MIT",
@@ -12,9 +13,14 @@
   "scripts": {
     "dev:server": "air dev:server",
     "dev:app": "yarn workspace app dev",
-    "dev": "concurrently \"yarn dev:server\" \"yarn dev:app\""
+    "dev": "concurrently \"yarn dev:server\" \"yarn dev:app\"",
+    "lint": "eslint ./app"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.22.0",
+    "typescript": "^5.4.2"
   }
 }
