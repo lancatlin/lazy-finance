@@ -117,6 +117,31 @@ paths:
       summary: Get File List
       tags:
       - files
+  /files/{path}:
+    get:
+      consumes:
+      - application/json
+      description: get file for a user
+      parameters:
+      - description: File Path
+        in: path
+        name: path
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns user file
+          schema:
+            type: file
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.Error'
+      summary: Get File
+      tags:
+      - files
   /templates:
     get:
       consumes:

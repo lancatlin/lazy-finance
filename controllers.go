@@ -114,3 +114,18 @@ func getFileList(c *gin.Context) {
 	}
 	c.JSON(200, files)
 }
+
+// @Summary      Get File
+// @Description  get file for a user
+// @Tags         files
+// @Accept       json
+// @Produce      json
+// @Param        path  path  string  true  "File Path"
+// @Success      200  {file}  string  "Returns user file"
+// @Failure      500  {object}  Error  "Internal Server Error"
+// @Router       /files/{path} [get]
+func getFile(c *gin.Context) {
+	user := getUser(c)
+	path := c.Param("path")
+	c.File(user.FilePath(path))
+}

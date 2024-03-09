@@ -110,6 +110,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/files/{path}": {
+            "get": {
+                "description": "get file for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Get File",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "File Path",
+                        "name": "path",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns user file",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/templates": {
             "get": {
                 "description": "get templates for a user",
