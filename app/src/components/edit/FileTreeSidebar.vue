@@ -6,7 +6,7 @@
     📂
   </button>
   <aside
-    class="border md:block bg-slate-200 md:w-64 md:h-screen"
+    class="border md:block bg-slate-200 md:w-64 md:h-full"
     :class="{ hidden: !sidebarOpen, block: sidebarOpen }"
   >
     <FileTree :nodes="folder" />
