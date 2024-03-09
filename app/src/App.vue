@@ -1,7 +1,9 @@
 <template>
   <NavBar />
 
-  <router-view class="py-5" />
+  <main class="w-full md:w-2/3 mx-auto">
+    <router-view class="py-5" />
+  </main>
 </template>
 
 <script setup lang="ts">

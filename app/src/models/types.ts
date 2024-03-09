@@ -30,3 +30,8 @@ export const defaultTemplate: Template = {
     },
   ],
 };
+
+export interface Balance {
+  account: string;
+  balance: string;
+}
