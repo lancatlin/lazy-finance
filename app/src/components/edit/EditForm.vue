@@ -1,6 +1,13 @@
+<script setup lang="ts">
+import { ref } from "vue";
+
+const code = ref(`console.log('Hello, world!')`);
+</script>
 <template>
-  <div>
-    <h1>Editor</h1>
-    <div></div>
+  <div class="w-full">
+    <textarea
+      class="w-full p-2 rounded m-2 bg-slate-100"
+      v-model="code"
+    ></textarea>
   </div>
 </template>
