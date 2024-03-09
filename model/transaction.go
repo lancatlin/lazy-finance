@@ -71,35 +71,3 @@ func (tx Transaction) Generate() (string, error) {
 
 	return buf.String(), nil
 }
-
-func LoadTransactions(input string) ([]Transaction, error) {
-	registers, err := LoadRegisters(input)
-	if err != nil {
-		return nil, err
-	}
-	return fromRegisters(registers)
-}
-
-func fromRegisters(registers []Register) ([]Transaction, error) {
-	var transactions = make([]Transaction, 0, len(registers)/2)
-	for _, reg := range registers {
-		acc, err := reg.ToAccount()
-		if err != nil {
-			return nil, err
-		}
-
-		idx := reg.TxnIdx - 1
-
-		if idx >= len(transactions) {
-			transactions = append(transactions, Transaction{
-				Name:     reg.Description,
-				Date:     reg.Date,
-				Accounts: []Account{acc},
-			})
-		} else {
-			transactions[idx].Accounts = append(transactions[idx].Accounts, acc)
-		}
-	}
-
-	return transactions, nil
-}

@@ -175,5 +175,5 @@ func (u *User) txs() ([]model.Transaction, error) {
 	if err != nil {
 		return nil, err
 	}
-	return model.LoadTransactions(output)
+	return ledger.LoadTransactions(output)
 }

@@ -1,4 +1,4 @@
-package model
+package ledger
 
 import (
 	"encoding/csv"
@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/lancatlin/lazy-finance/model"
 )
 
 type Register struct {
@@ -84,14 +86,46 @@ func ConvertAmount(money string) (float64, string, error) {
 	return amount, commodity, nil
 }
 
-func (r Register) ToAccount() (Account, error) {
+func (r Register) ToAccount() (model.Account, error) {
 	amount, commodity, err := ConvertAmount(r.Amount)
 	if err != nil {
-		return Account{}, err
+		return model.Account{}, err
 	}
-	return Account{
+	return model.Account{
 		Name:      r.Account,
 		Amount:    amount,
 		Commodity: commodity,
 	}, nil
+}
+
+func LoadTransactions(input string) ([]model.Transaction, error) {
+	registers, err := LoadRegisters(input)
+	if err != nil {
+		return nil, err
+	}
+	return toTransactions(registers)
+}
+
+func toTransactions(registers []Register) ([]model.Transaction, error) {
+	var transactions = make([]model.Transaction, 0, len(registers)/2)
+	for _, reg := range registers {
+		acc, err := reg.ToAccount()
+		if err != nil {
+			return nil, err
+		}
+
+		idx := reg.TxnIdx - 1
+
+		if idx >= len(transactions) {
+			transactions = append(transactions, model.Transaction{
+				Name:     reg.Description,
+				Date:     reg.Date,
+				Accounts: []model.Account{acc},
+			})
+		} else {
+			transactions[idx].Accounts = append(transactions[idx].Accounts, acc)
+		}
+	}
+
+	return transactions, nil
 }

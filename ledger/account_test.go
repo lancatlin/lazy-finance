@@ -1,6 +1,11 @@
-package model
+package ledger
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/lancatlin/lazy-finance/model"
+	"github.com/stretchr/testify/assert"
+)
 
 func TestConvertAmount(t *testing.T) {
 	tests := []struct {
@@ -49,11 +54,11 @@ func TestConvertRegisterToAccount(t *testing.T) {
 		Amount:  "100 USD",
 	}
 	account, err := reg.ToAccount()
-	assertNil(t, err)
-	expectedAccount := Account{
+	assert.NoError(t, err)
+	expectedAccount := model.Account{
 		Name:      "assets",
 		Amount:    100,
 		Commodity: "USD",
 	}
-	assertEqual(t, expectedAccount, account)
+	assert.Equal(t, expectedAccount, account)
 }
