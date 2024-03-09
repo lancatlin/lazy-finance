@@ -1,5 +1,12 @@
 basePath: /api
 definitions:
+  ledger.Balance:
+    properties:
+      account:
+        type: string
+      balance:
+        type: string
+    type: object
   main.Error:
     properties:
       message:
@@ -52,6 +59,27 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
+  /balances:
+    get:
+      consumes:
+      - application/json
+      description: get balances for a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns user balances
+          schema:
+            items:
+              $ref: '#/definitions/ledger.Balance'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.Error'
+      summary: Get Balances
+      tags:
+      - balances
   /queries:
     get:
       consumes:

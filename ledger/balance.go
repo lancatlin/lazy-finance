@@ -7,8 +7,8 @@ import (
 )
 
 type Balance struct {
-	Account string
-	Balance string
+	Account string `json:"account"`
+	Balance string `json:"balance"`
 }
 
 func LoadBalances(input string) ([]Balance, error) {

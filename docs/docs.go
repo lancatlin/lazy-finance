@@ -24,6 +24,38 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/balances": {
+            "get": {
+                "description": "get balances for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "balances"
+                ],
+                "summary": "Get Balances",
+                "responses": {
+                    "200": {
+                        "description": "Returns user balances",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ledger.Balance"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/queries": {
             "get": {
                 "description": "get queries for a user",
@@ -166,6 +198,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "ledger.Balance": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "balance": {
+                    "type": "string"
+                }
+            }
+        },
         "main.Error": {
             "type": "object",
             "properties": {

@@ -177,3 +177,16 @@ func (u *User) txs() ([]model.Transaction, error) {
 	}
 	return ledger.LoadTransactions(output)
 }
+
+func (u *User) getBalances() (balances []ledger.Balance, err error) {
+	f, err := u.ReadFile(DEFAULT_JOURNAL)
+	if err != nil {
+		return nil, err
+	}
+	command := ledger.NewCommand("bal", u.Dir(), f)
+	output, err := command.Execute()
+	if err != nil {
+		return nil, err
+	}
+	return ledger.LoadBalances(output)
+}
