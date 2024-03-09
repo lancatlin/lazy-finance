@@ -6,24 +6,6 @@ import (
 	"github.com/lancatlin/lazy-finance/model"
 )
 
-// @Summary      Get Queries
-// @Description  get queries for a user
-// @Tags         queries
-// @Accept       json
-// @Produce      json
-// @Success      200  {array}  Query  "Returns user queries"
-// @Failure      500  {object}  Error  "Internal Server Error"
-// @Router       /queries [get]
-func getQueries(c *gin.Context) {
-	user := getUser(c)
-	queries, err := user.queries()
-	if err != nil {
-		c.AbortWithError(500, err)
-		return
-	}
-	c.JSON(200, queries)
-}
-
 // @Summary      Get Templates
 // @Description  get templates for a user
 // @Tags         templates
@@ -113,4 +95,22 @@ func getBalances(c *gin.Context) {
 		return
 	}
 	c.JSON(200, balances)
+}
+
+// @Summary      Get File List
+// @Description  get file list for a user
+// @Tags         files
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}  File  "Returns user file list"
+// @Failure      500  {object}  Error  "Internal Server Error"
+// @Router       /files [get]
+func getFileList(c *gin.Context) {
+	user := getUser(c)
+	files, err := user.ListFiles()
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+	c.JSON(200, files)
 }

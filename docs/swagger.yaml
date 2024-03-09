@@ -12,15 +12,18 @@ definitions:
       message:
         type: string
     type: object
-  main.Query:
+  main.File:
     properties:
+      children:
+        items:
+          $ref: '#/definitions/main.File'
+        type: array
       name:
         type: string
-      query:
+      path:
         type: string
-    required:
-    - name
-    - query
+      type:
+        type: string
     type: object
   model.Account:
     properties:
@@ -93,27 +96,27 @@ paths:
       summary: Get Balances
       tags:
       - balances
-  /queries:
+  /files:
     get:
       consumes:
       - application/json
-      description: get queries for a user
+      description: get file list for a user
       produces:
       - application/json
       responses:
         "200":
-          description: Returns user queries
+          description: Returns user file list
           schema:
             items:
-              $ref: '#/definitions/main.Query'
+              $ref: '#/definitions/main.File'
             type: array
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/main.Error'
-      summary: Get Queries
+      summary: Get File List
       tags:
-      - queries
+      - files
   /templates:
     get:
       consumes:

@@ -46,11 +46,11 @@ func router() *gin.Engine {
 
 	authApi := api.Group("", authenticate)
 
-	authApi.GET("/queries", getQueries)
 	authApi.GET("/templates", getTemplates)
 	authApi.POST("/txs", newTx)
 	authApi.GET("/txs", getTxs)
 	authApi.GET("/balances", getBalances)
+	authApi.GET("/files", getFileList)
 
 	authZone := r.Group("", authenticate)
 
@@ -100,30 +100,30 @@ func router() *gin.Engine {
 		c.Redirect(303, "/dashboard")
 	})
 
-	authZone.GET("/edit", func(c *gin.Context) {
-		user := getUser(c)
-		filename := c.Query("filename")
-		list, err := user.List()
-		if err != nil {
-			c.AbortWithError(500, err)
-			return
-		}
-		exists := contain(list, filename)
-		var data []byte
-		if exists {
-			data, err = user.readAllFile(filename)
-			if err != nil {
-				c.AbortWithError(500, err)
-			}
-		}
+	// authZone.GET("/edit", func(c *gin.Context) {
+	// 	user := getUser(c)
+	// 	filename := c.Query("filename")
+	// 	list, err := user.List()
+	// 	if err != nil {
+	// 		c.AbortWithError(500, err)
+	// 		return
+	// 	}
+	// 	exists := contain(list, filename)
+	// 	var data []byte
+	// 	if exists {
+	// 		data, err = user.readAllFile(filename)
+	// 		if err != nil {
+	// 			c.AbortWithError(500, err)
+	// 		}
+	// 	}
 
-		HTML(c, 200, "edit.html", gin.H{
-			"Data":     string(data),
-			"FileName": filename,
-			"FileList": list,
-			"Exists":   exists,
-		})
-	})
+	// 	HTML(c, 200, "edit.html", gin.H{
+	// 		"Data":     string(data),
+	// 		"FileName": filename,
+	// 		"FileList": list,
+	// 		"Exists":   exists,
+	// 	})
+	// })
 
 	authZone.POST("/edit", func(c *gin.Context) {
 		user := getUser(c)

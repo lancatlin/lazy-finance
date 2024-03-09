@@ -78,9 +78,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/queries": {
+        "/files": {
             "get": {
-                "description": "get queries for a user",
+                "description": "get file list for a user",
                 "consumes": [
                     "application/json"
                 ],
@@ -88,16 +88,16 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "queries"
+                    "files"
                 ],
-                "summary": "Get Queries",
+                "summary": "Get File List",
                 "responses": {
                     "200": {
-                        "description": "Returns user queries",
+                        "description": "Returns user file list",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/main.Query"
+                                "$ref": "#/definitions/main.File"
                             }
                         }
                     },
@@ -261,17 +261,22 @@ const docTemplate = `{
                 }
             }
         },
-        "main.Query": {
+        "main.File": {
             "type": "object",
-            "required": [
-                "name",
-                "query"
-            ],
             "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/main.File"
+                    }
+                },
                 "name": {
                     "type": "string"
                 },
-                "query": {
+                "path": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

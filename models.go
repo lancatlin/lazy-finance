@@ -50,14 +50,16 @@ func (u *User) WriteFile(name string) (*os.File, error) {
 	return u.File(name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 }
 
-func (u *User) List() ([]string, error) {
+func (u *User) ListFiles() ([]File, error) {
 	files, err := os.ReadDir(u.Dir())
 	if err != nil {
-		return []string{}, fmt.Errorf("failed to open directory: %w", err)
+		return nil, fmt.Errorf("failed to open directory: %w", err)
 	}
-	result := make([]string, len(files))
+	result := make([]File, len(files))
 	for i, v := range files {
-		result[i] = v.Name()
+		result[i] = File{
+			Name: v.Name(),
+		}
 	}
 	return result, nil
 }
