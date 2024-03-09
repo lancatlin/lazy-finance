@@ -96,12 +96,18 @@ func getTxs(c *gin.Context) {
 // @Tags         balances
 // @Accept       json
 // @Produce      json
+// @Param        query  query      ledger.Query  false  "Query"
 // @Success      200  {array}  ledger.Balance  "Returns user balances"
 // @Failure      500  {object}  Error  "Internal Server Error"
 // @Router       /balances [get]
 func getBalances(c *gin.Context) {
 	user := getUser(c)
-	balances, err := user.getBalances()
+	query := ledger.Query{}
+	if err := c.Bind(&query); err != nil {
+		c.AbortWithError(400, err)
+		return
+	}
+	balances, err := user.getBalances(query)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return

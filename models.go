@@ -185,16 +185,14 @@ func (u *User) txs(query ledger.Query) ([]model.Transaction, error) {
 	return ledger.LoadTransactions(output)
 }
 
-func (u *User) getBalances() (balances []ledger.Balance, err error) {
+func (u *User) getBalances(query ledger.Query) (balances []ledger.Balance, err error) {
 	f, err := u.ReadFile(DEFAULT_JOURNAL)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
 
-	query := ledger.Query{
-		Command: "bal",
-	}
+	query.Command = "bal"
 	command := ledger.NewCommand(query, u.Dir(), f)
 	output, err := command.Execute()
 	if err != nil {

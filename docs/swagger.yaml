@@ -64,6 +64,19 @@ paths:
       consumes:
       - application/json
       description: get balances for a user
+      parameters:
+      - in: query
+        name: begin
+        type: string
+      - in: query
+        name: command
+        type: string
+      - in: query
+        name: end
+        type: string
+      - in: query
+        name: keyword
+        type: string
       produces:
       - application/json
       responses:

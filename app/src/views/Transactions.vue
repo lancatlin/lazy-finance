@@ -6,7 +6,7 @@ import { debounce } from "../utils/debounce";
 import SearchForm from "../components/SearchForm.vue";
 
 const transactions = ref<Transaction[]>([]);
-const searchCriteria = ref<Query>({
+const query = ref<Query>({
   keyword: "",
   begin: undefined,
   end: undefined,
@@ -15,7 +15,7 @@ const searchCriteria = ref<Query>({
 const debouncedGetTxs = debounce(getTxs, 400);
 
 watch(
-  searchCriteria,
+  query,
   async (newCriteria) => {
     const txs = await debouncedGetTxs(newCriteria);
     transactions.value = txs;
@@ -27,8 +27,8 @@ watch(
 <template>
   <div class="flex flex-col items-center">
     <h1 class="text-2xl font-bold mb-5">Transactions</h1>
-    <SearchForm v-model="searchCriteria" />
-    <p>{{ searchCriteria }}</p>
+    <SearchForm v-model="query" />
+    <p>{{ query }}</p>
     <table class="table-auto border">
       <tr class="border bg-gray-400">
         <th class="px-5 py-3">Date</th>
