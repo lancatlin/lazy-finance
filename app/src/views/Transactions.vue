@@ -2,17 +2,26 @@
 import { onMounted, ref } from "vue";
 import { Transaction } from "../models/types";
 import { getTxs } from "../utils/api";
+import SearchForm from "../components/SearchForm.vue";
 
 const transactions = ref<Transaction[]>([]);
+const searchCriteria = ref({
+  searchTerm: "",
+  beginDate: "",
+  endDate: "",
+});
 
 onMounted(async () => {
   const txs = await getTxs();
   transactions.value = txs;
 });
 </script>
+
 <template>
   <div class="flex flex-col items-center">
     <h1 class="text-2xl font-bold mb-5">Transactions</h1>
+    <SearchForm v-model="searchCriteria" />
+    <p>{{ searchCriteria }}</p>
     <table class="table-auto border">
       <tr class="border bg-gray-400">
         <th class="px-5 py-3">Date</th>
