@@ -12,7 +12,7 @@ onMounted(async () => {
 </script>
 <template>
   <div class="flex flex-col items-center">
-    <h1 class="text-2xl font-bold">Transactions</h1>
+    <h1 class="text-2xl font-bold mb-5">Transactions</h1>
     <table class="table-auto border">
       <tr class="border bg-gray-400">
         <th class="px-5 py-3">Date</th>

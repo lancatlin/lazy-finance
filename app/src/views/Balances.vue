@@ -1,15 +1,26 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useToast } from "vue-toast-notification";
 import { Balance } from "../models/types";
+import { getBalances } from "../utils/api";
 
-const balances = ref<Balance[]>([
-  { account: "assets", balance: "$-200" },
-  { account: "expenses", balance: "$200" },
-]);
+const balances = ref<Balance[]>([]);
+
+const toast = useToast();
+
+onMounted(async () => {
+  try {
+    const balancesData = await getBalances();
+    balances.value = balancesData;
+  } catch (err) {
+    console.error(err);
+    toast.error(err as string);
+  }
+});
 </script>
 <template>
   <div class="flex flex-col items-center">
-    <h1 class="text-2xl mb-10">Balances</h1>
+    <h1 class="text-2xl font-bold mb-5">Balances</h1>
     <table class="table-auto border">
       <thead class="border bg-gray-400">
         <tr>

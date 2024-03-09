@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Template, Transaction } from "../models/types";
+import { Balance, Template, Transaction } from "../models/types";
 
 const api = axios.create({
   baseURL: "/api",
@@ -33,4 +33,9 @@ export async function getTxs(): Promise<Transaction[]> {
     ...tx,
     date: new Date(tx.date),
   }));
+}
+
+export async function getBalances(): Promise<Balance[]> {
+  const response = await api.get<Balance[]>("/balances");
+  return response.data;
 }
