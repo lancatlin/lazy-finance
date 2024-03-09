@@ -146,6 +146,51 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "upload file for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Upload File",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "File Path",
+                        "name": "path",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "File Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns success",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.Error"
+                        }
+                    }
+                }
             }
         },
         "/templates": {

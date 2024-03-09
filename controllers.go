@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lancatlin/lazy-finance/ledger"
 	"github.com/lancatlin/lazy-finance/model"
@@ -128,4 +130,38 @@ func getFile(c *gin.Context) {
 	user := getUser(c)
 	path := c.Param("path")
 	c.File(user.FilePath(path))
+}
+
+// @Summary      Upload File
+// @Description  upload file for a user
+// @Tags         files
+// @Accept       json
+// @Produce      json
+// @Param        path  path  string  true  "File Path"
+// @Param        data  body  string  true  "File Data"
+// @Success      200  {object}  string  "Returns success"
+// @Failure      500  {object}  Error  "Internal Server Error"
+// @Router       /files/{path} [post]
+func uploadFile(c *gin.Context) {
+	user := getUser(c)
+	path := c.Param("path")
+	var payload map[string]string
+	if err := c.BindJSON(&payload); err != nil {
+		c.AbortWithError(400, err)
+		return
+	}
+
+	data, ok := payload["data"]
+	if !ok {
+		c.AbortWithError(400, fmt.Errorf("missing data"))
+		return
+	}
+	err := user.overwriteFile(path, data)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+	c.JSON(200, gin.H{
+		"message": "success",
+	})
 }

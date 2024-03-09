@@ -52,6 +52,7 @@ func router() *gin.Engine {
 	authApi.GET("/balances", getBalances)
 	authApi.GET("/files", getFileList)
 	authApi.GET("/files/*path", getFile)
+	authApi.POST("/files/*path", uploadFile)
 
 	authZone := r.Group("", authenticate)
 
