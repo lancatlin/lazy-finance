@@ -1,26 +1,41 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { watch, ref } from "vue";
 import { useToast } from "vue-toast-notification";
-import { Balance } from "../models/types";
+import { Balance, Query } from "../models/types";
 import { getBalances } from "../utils/api";
+import { debounce } from "../utils/debounce";
+import SearchForm from "../components/SearchForm.vue";
 
 const balances = ref<Balance[]>([]);
 
 const toast = useToast();
 
-onMounted(async () => {
-  try {
-    const balancesData = await getBalances();
-    balances.value = balancesData;
-  } catch (err) {
-    console.error(err);
-    toast.error(err as string);
-  }
+const query = ref<Query>({
+  keyword: "",
+  begin: undefined,
+  end: undefined,
 });
+
+const debouncedGetBalances = debounce(getBalances, 400);
+
+watch(
+  query,
+  async (newCriteria: Query) => {
+    try {
+      const balancesData = await debouncedGetBalances(newCriteria);
+      balances.value = balancesData;
+    } catch (err) {
+      console.error(err);
+      toast.error(err as string);
+    }
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <div class="flex flex-col items-center">
     <h1 class="text-2xl font-bold mb-5">Balances</h1>
+    <SearchForm v-model="query" />
     <table class="table-auto border">
       <thead class="border bg-gray-400">
         <tr>

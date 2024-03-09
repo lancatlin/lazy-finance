@@ -35,7 +35,7 @@ export async function getTxs(query: Query): Promise<Transaction[]> {
   }));
 }
 
-export async function getBalances(): Promise<Balance[]> {
-  const response = await api.get<Balance[]>("/balances");
+export async function getBalances(query: Query): Promise<Balance[]> {
+  const response = await api.get<Balance[]>("/balances", { params: query });
   return response.data;
 }
