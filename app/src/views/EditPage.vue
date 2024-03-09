@@ -33,9 +33,11 @@ const folder = ref<Folder>({
 });
 </script>
 <template>
-  <div>
-    <h1>Edit</h1>
-    <p>Edit page</p>
+  <div class="relative md:flex md:flex-row">
     <FileTreeSidebar />
+    <div>
+      <h1>Edit</h1>
+      <p>Edit page</p>
+    </div>
   </div>
 </template>

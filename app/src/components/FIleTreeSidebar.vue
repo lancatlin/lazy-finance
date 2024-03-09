@@ -1,9 +1,12 @@
 <template>
-  <button @click="sidebarOpen = !sidebarOpen" class="md:hidden">
-    Toggle Sidebar
+  <button
+    @click="sidebarOpen = !sidebarOpen"
+    class="md:hidden bg-slate-200 rounded shadow p-3 absolute top-2 right-2"
+  >
+    📂
   </button>
   <aside
-    class="border md:block"
+    class="border md:block bg-slate-200 md:w-64 md:h-screen"
     :class="{ hidden: !sidebarOpen, block: sidebarOpen }"
   >
     <FileTree :nodes="folder" />

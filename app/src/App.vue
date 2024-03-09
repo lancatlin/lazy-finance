@@ -1,8 +1,8 @@
 <template>
   <NavBar />
 
-  <main class="w-full md:w-2/3 mx-auto">
-    <router-view class="py-5" />
+  <main>
+    <router-view />
   </main>
 </template>
 
