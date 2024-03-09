@@ -75,13 +75,15 @@ func (u *User) readAllFile(name string) (data []byte, err error) {
 func (u *User) appendToFile(tx string) (err error) {
 	f, err := u.AppendFile(DEFAULT_JOURNAL)
 	if err != nil {
-		return err
+		return
 	}
-	defer f.Close()
 
 	buf := strings.NewReader(strings.ReplaceAll(tx, "\r", "")) // Remove CR generated from browser
 	_, err = io.Copy(f, buf)
-	return err
+	if err != nil {
+		return
+	}
+	return f.Close()
 }
 
 func (u *User) overwriteFile(filename string, tx string) (err error) {
@@ -89,11 +91,13 @@ func (u *User) overwriteFile(filename string, tx string) (err error) {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 
 	buf := strings.NewReader(strings.ReplaceAll(tx, "\r", "")) // Remove CR generated from browser
 	_, err = io.Copy(f, buf)
-	return err
+	if err != nil {
+		return err
+	}
+	return f.Close()
 }
 
 func (u *User) query(query string) (result string, err error) {
@@ -170,6 +174,7 @@ func (u *User) txs() ([]model.Transaction, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer f.Close()
 	command := ledger.NewCommand("reg", u.Dir(), f)
 	output, err := command.Execute()
 	if err != nil {
@@ -183,6 +188,7 @@ func (u *User) getBalances() (balances []ledger.Balance, err error) {
 	if err != nil {
 		return nil, err
 	}
+	defer f.Close()
 	command := ledger.NewCommand("bal", u.Dir(), f)
 	output, err := command.Execute()
 	if err != nil {
