@@ -11,9 +11,10 @@ import (
 func router() *gin.Engine {
 	r := gin.Default()
 
-	// Error handling middleware
 	r.Use(errorHandler)
 	r.Use(session)
+
+	r.NoRoute(staticFiles)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
