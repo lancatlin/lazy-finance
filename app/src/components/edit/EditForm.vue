@@ -4,7 +4,7 @@ import { getFileContent, saveFile } from "../../utils/api";
 import { useToast } from "vue-toast-notification";
 
 const toast = useToast();
-const code = ref(`console.log('Hello, world!')`);
+const code = ref(``);
 const fileChanged = ref<boolean>(false);
 defineEmits({});
 
@@ -26,6 +26,10 @@ watch(
 
 async function reset() {
   try {
+    if (!props.filePath) {
+      code.value = "";
+      return;
+    }
     code.value = await getFileContent(props.filePath);
     fileChanged.value = false;
   } catch (err) {
@@ -55,6 +59,7 @@ async function save() {
       class="w-full h-full p-2 rounded bg-slate-100"
       rows="20"
       v-model="code"
+      :disabled="!filePath"
       @input="onChange"
     ></textarea>
     <div class="flex flex-row justify-end">

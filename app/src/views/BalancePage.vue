@@ -33,7 +33,7 @@ watch(
 );
 </script>
 <template>
-  <div class="flex flex-col items-center">
+  <div class="flex flex-col items-center mt-5">
     <h1 class="text-2xl font-bold mb-5">Balances</h1>
     <SearchForm v-model="query" />
     <table class="table-auto border">
