@@ -9,45 +9,21 @@
     class="border md:block bg-slate-200 md:w-64 md:h-full"
     :class="{ hidden: !sidebarOpen, block: sidebarOpen }"
   >
-    <FileTree :nodes="folder" />
+    <FileTree :nodes="files" />
   </aside>
 </template>
 
 <script setup lang="ts">
 import FileTree from "./FileTree.vue";
-import { ref } from "vue";
-import { Folder } from "../../models/types";
+import { ref, PropType } from "vue";
+import { File } from "../../models/types";
 
 const sidebarOpen = ref(false);
 
-const folder = ref<Folder[]>([
-  {
-    name: "root",
-    type: "folder",
-    children: [
-      {
-        name: "journals",
-        type: "folder",
-        children: [
-          {
-            name: "2021.j",
-            type: "file",
-          },
-          {
-            name: "2022.j",
-            type: "file",
-          },
-          {
-            name: "2023.j",
-            type: "file",
-          },
-        ],
-      },
-      {
-        name: "settings.json",
-        type: "file",
-      },
-    ],
+defineProps({
+  files: {
+    type: Array as PropType<File[]>,
+    required: true,
   },
-]);
+});
 </script>

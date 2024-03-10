@@ -44,11 +44,6 @@ export interface Query {
 
 export interface File {
   name: string;
-  type: "file";
-}
-
-export interface Folder {
-  name: string;
-  type: "folder";
-  children: (Folder | File)[];
+  type: "file" | "folder";
+  children?: File[];
 }

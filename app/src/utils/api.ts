@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Balance, Template, Transaction, Query } from "../models/types";
+import { Balance, Template, Transaction, Query, File } from "../models/types";
 
 const api = axios.create({
   baseURL: "/api",
@@ -37,5 +37,15 @@ export async function getTxs(query: Query): Promise<Transaction[]> {
 
 export async function getBalances(query: Query): Promise<Balance[]> {
   const response = await api.get<Balance[]>("/balances", { params: query });
+  return response.data;
+}
+
+export async function getFileList(): Promise<File[]> {
+  const response = await api.get<File[]>("/files");
+  return response.data;
+}
+
+export async function getFileContent(path: string): Promise<string> {
+  const response = await api.get<string>(`/files/${path}`);
   return response.data;
 }
