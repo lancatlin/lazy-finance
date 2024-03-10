@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { reactive } from "vue";
 import { useToast } from "vue-toast-notification";
 import { LoginRequest } from "../models/types";
 import { signIn } from "../utils/api";

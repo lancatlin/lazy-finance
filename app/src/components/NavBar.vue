@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { logout } from "../utils/api";
 
 const menuOpen = ref(false);
 
 const route = useRoute();
+const router = useRouter();
 const path = computed(() => route.path);
 
 const toggleMenu = () => {
   menuOpen.value = !menuOpen.value;
 };
+
+async function onLogout() {
+  await logout();
+  router.push({ name: "SignIn" });
+}
 </script>
 <template>
   <nav
@@ -80,7 +86,7 @@ const toggleMenu = () => {
         >Balances</router-link
       >
       <button
-        @click="logout"
+        @click="onLogout"
         class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm"
       >
         Logout
