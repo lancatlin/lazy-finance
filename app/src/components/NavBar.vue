@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 
 const menuOpen = ref(false);
+
+const route = useRoute();
+const path = computed(() => route.path);
 
 const toggleMenu = () => {
   menuOpen.value = !menuOpen.value;
@@ -51,26 +55,27 @@ const toggleMenu = () => {
       <!-- Primary navigation links -->
       <router-link
         to="/"
-        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-        active-class="text-gray-900"
+        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm"
+        :class="{ 'font-bold': path === '/' }"
         >Home</router-link
       >
       <router-link
         to="/edit"
-        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm"
+        :class="{ 'font-bold': path.startsWith('/edit') }"
         active-class="text-gray-900"
         >Edit</router-link
       >
       <router-link
         to="/transactions"
-        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-        active-class="text-gray-900"
+        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm"
+        :class="{ 'font-bold': path.startsWith('/transactions') }"
         >Transactions</router-link
       >
       <router-link
         to="/balances"
-        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-        active-class="text-gray-900"
+        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm"
+        :class="{ 'font-bold': path.startsWith('/balances') }"
         >Balances</router-link
       >
     </div>
