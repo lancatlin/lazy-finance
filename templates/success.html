@@ -1,6 +1,0 @@
-{{ define "title" }}Success{{ end }}
-{{ define "main" }}
-<p><strong>Success</strong></p>
-{{ with .FileName }}<p><a href="/edit?filename={{ . }}">繼續編輯</a></p>{{ end }}
-<pre><code>{{ .Tx }}</code></pre>
-{{ end }}

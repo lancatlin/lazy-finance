@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
+import { logout } from "../utils/api";
 
 const menuOpen = ref(false);
 
@@ -78,6 +79,12 @@ const toggleMenu = () => {
         :class="{ 'font-bold': path.startsWith('/balances') }"
         >Balances</router-link
       >
+      <button
+        @click="logout"
+        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm"
+      >
+        Logout
+      </button>
     </div>
   </nav>
 </template>

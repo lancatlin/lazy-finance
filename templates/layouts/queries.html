@@ -1,8 +1,0 @@
-{{ define "queries" }}
-<h3>快速查詢</h3>
-<ul>
-    {{ range . }}
-    <li><a href="/query?query={{ index . 1 | urlquery  }}">{{ index . 0 }}</a></li>
-    {{ end }}
-</ul>
-{{ end }}

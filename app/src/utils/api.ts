@@ -60,3 +60,7 @@ export async function getFileContent(path: string): Promise<string> {
 export async function saveFile(path: string, content: string): Promise<void> {
   await api.post(`/files/${path}`, { data: content });
 }
+
+export async function logout(): Promise<void> {
+  await api.post("/logout");
+}

@@ -9,12 +9,12 @@ import (
 func authenticate(c *gin.Context) {
 	cookie, err := c.Cookie("session")
 	if err == http.ErrNoCookie {
-		c.Redirect(303, "/signin")
+		c.AbortWithError(401, err)
 		return
 	}
 	session, err := store.Verify(cookie)
 	if err != nil {
-		c.Redirect(303, "/signin")
+		c.AbortWithError(401, err)
 		return
 	}
 	c.Set("user", User{
@@ -30,11 +30,11 @@ func getUser(c *gin.Context) User {
 func signup(c *gin.Context) {
 	var user User
 	if err := c.ShouldBind(&user); err != nil {
-		HTML(c, 400, "signup.html", err)
+		c.AbortWithError(400, err)
 		return
 	}
 	if err := store.Register(user.Email, user.Password); err != nil {
-		HTML(c, 400, "signup.html", err)
+		c.AbortWithError(400, err)
 		return
 	}
 	if err := user.Mkdir(); err != nil {
@@ -46,14 +46,19 @@ func signup(c *gin.Context) {
 func signin(c *gin.Context) {
 	var user User
 	if err := c.ShouldBind(&user); err != nil {
-		HTML(c, 400, "signin.html", err)
+		c.AbortWithError(400, err)
 		return
 	}
 	token, err := store.Login(user.Email, user.Password)
 	if err != nil {
-		HTML(c, 401, "signin.html", err)
+		c.AbortWithError(401, err)
 		return
 	}
 	c.SetCookie("session", token, 60*60*24*7, "", "", false, false)
-	c.Redirect(303, "/dashboard")
+	c.Status(200)
+}
+
+func logout(c *gin.Context) {
+	c.SetCookie("session", "", -1, "", "", false, false)
+	c.Status(200)
 }

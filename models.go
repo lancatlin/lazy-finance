@@ -1,13 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"path"
 	"strings"
 
@@ -101,40 +99,6 @@ func (u *User) overwriteFile(filename string, tx string) (err error) {
 		return err
 	}
 	return f.Close()
-}
-
-func (u *User) query(query string) (result string, err error) {
-	var buf bytes.Buffer
-
-	cmd := exec.Command("hledger")
-	cmd.Dir = u.Dir()
-	cmd.Stdin = strings.NewReader(query)
-	cmd.Stdout = &buf
-	cmd.Stderr = &buf
-	err = cmd.Run()
-	return buf.String(), err
-}
-
-func (u *User) queries() (queries [][2]string, err error) {
-	f, err := u.ReadFile(QUERIES_FILE)
-	if err != nil {
-		err = fmt.Errorf("failed to read queries file: %w", err)
-		return
-	}
-	defer f.Close()
-
-	fileScanner := bufio.NewScanner(f)
-	fileScanner.Split(bufio.ScanLines)
-
-	queries = make([][2]string, 0)
-	for fileScanner.Scan() {
-		arr := strings.SplitN(fileScanner.Text(), ":", 2)
-		if len(arr) < 2 {
-			continue
-		}
-		queries = append(queries, [2]string{arr[0], arr[1]})
-	}
-	return
 }
 
 func (u *User) templates() (templates []model.Template, err error) {
