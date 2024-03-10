@@ -47,3 +47,12 @@ export interface File {
   type: "file" | "folder";
   children?: File[];
 }
+
+export interface Status {
+  signedIn: boolean;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}

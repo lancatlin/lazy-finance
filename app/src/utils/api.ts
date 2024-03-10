@@ -1,5 +1,13 @@
 import axios from "axios";
-import { Balance, Template, Transaction, Query, File } from "../models/types";
+import {
+  Balance,
+  Template,
+  Transaction,
+  Query,
+  File,
+  Status,
+  LoginRequest,
+} from "../models/types";
 
 const api = axios.create({
   baseURL: "/api",
@@ -21,14 +29,18 @@ export async function newTx(
     });
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 400) {
-      throw new Error(
-        error.response.data.message ||
-          "An error occurred while trying to create a new transaction."
-      );
-    }
-    throw error; // Rethrow error if it's not the specific 400 error we're checking for or if it's a different kind of error
+    throw handleHttpError(error);
   }
+}
+
+function handleHttpError(error: unknown): any {
+  if (axios.isAxiosError(error) && error.response?.status === 400) {
+    return new Error(
+      error.response.data.message ||
+        "An error occurred while trying to create a new transaction."
+    );
+  }
+  return error;
 }
 
 export async function getTxs(query: Query): Promise<Transaction[]> {
@@ -61,11 +73,34 @@ export async function saveFile(path: string, content: string): Promise<void> {
   await api.post(`/files/${path}`, { data: content });
 }
 
+export async function signIn(payload: LoginRequest): Promise<void> {
+  try {
+    await api.post("/signin", payload);
+  } catch (err) {
+    throw handleAuthError(err);
+  }
+}
+
+export async function signUp(payload: LoginRequest): Promise<void> {
+  try {
+    await api.post("/signup", payload);
+  } catch (err) {
+    throw handleAuthError(err);
+  }
+}
+
+function handleAuthError(err: unknown): any {
+  if (axios.isAxiosError(err) && err.response?.status === 401) {
+    return new Error("Invalid email or password");
+  }
+  return err;
+}
+
 export async function logout(): Promise<void> {
   await api.post("/logout");
 }
 
 export async function isSignedIn(): Promise<boolean> {
-  const response = await api.get("/is_signed_in");
-  return response.data;
+  const response = await api.get<Status>("/status");
+  return response.data.signedIn;
 }

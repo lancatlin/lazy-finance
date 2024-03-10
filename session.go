@@ -96,6 +96,6 @@ func logout(c *gin.Context) {
 func status(c *gin.Context) {
 	_, ok := c.Get("user")
 	c.JSON(200, gin.H{
-		"signed_in": ok,
+		"signedIn": ok,
 	})
 }
