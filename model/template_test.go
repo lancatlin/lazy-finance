@@ -2,6 +2,7 @@ package model
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -42,4 +43,41 @@ func TestLoadTemplates(t *testing.T) {
 		},
 	}
 	assert.Equal(t, expectedTemplates, templates)
+}
+
+func TestFromTransaction(t *testing.T) {
+	tx := Transaction{
+		Name: "restaurant",
+		Date: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
+		Accounts: []Account{
+			{
+				Name:      "expenses:food",
+				Amount:    100,
+				Commodity: "$",
+			},
+			{
+				Name:      "asset:cash",
+				Amount:    0,
+				Commodity: "$",
+			},
+		},
+	}
+
+	template := FromTransaction(tx)
+	expected := Template{
+		Name: "restaurant",
+		Accounts: []Account{
+			{
+				Name:      "expenses:food",
+				Amount:    100,
+				Commodity: "$",
+			},
+			{
+				Name:      "asset:cash",
+				Amount:    0,
+				Commodity: "$",
+			},
+		},
+	}
+	assert.Equal(t, expected, template)
 }
