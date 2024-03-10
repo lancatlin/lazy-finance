@@ -75,7 +75,7 @@ const onSubmit = async () => {
 </script>
 
 <template>
-  <div class="container max-w-lg mx-auto px-3">
+  <div class="container max-w-lg mx-auto px-3 mt-5">
     <div>
       <div class="mb-6 flex items-center">
         <label for="template" class="text-sm font-medium text-gray-900 mr-2"
@@ -84,7 +84,7 @@ const onSubmit = async () => {
         <select
           v-model="selectedTemplate"
           id="template"
-          class="bg-gray-50 border rounded"
+          class="bg-gray-50 border rounded p-2"
         >
           <option
             v-for="template in templates"
@@ -180,18 +180,26 @@ const onSubmit = async () => {
       <!-- Add account button -->
       <button
         @click="addAccount"
-        class="block bg-gray-100 hover:bg-white border px-3 py-2 rounded shadow disabled:shadow-none disabled:bg-gray-200 mt-5 hover:white"
+        class="bg-gray-100 hover:bg-white border px-3 py-2 rounded shadow disabled:shadow-none disabled:bg-gray-200 mt-5 hover:white"
       >
         Add Account
       </button>
 
-      <!-- Submit -->
-      <button
-        @click="onSubmit"
-        class="block bg-gray-100 hover:bg-white border px-3 py-2 rounded shadow disabled:shadow-none disabled:bg-gray-200 mt-5 hover:white"
-      >
-        Submit
-      </button>
+      <div class="flex flex-row items-center mt-5">
+        <button
+          @click="onSubmit"
+          class="block bg-gray-100 hover:bg-white border px-3 py-2 rounded shadow disabled:shadow-none disabled:bg-gray-200 hover:white mr-2"
+        >
+          Submit
+        </button>
+        <input
+          id="save"
+          type="checkbox"
+          class="w-5 h-5 mr-2 rounded focus:ring-blue-500"
+        />
+        <label for="save" class="mr-2">Save as Template</label>
+        <!-- Submit -->
+      </div>
     </div>
   </div>
 </template>
