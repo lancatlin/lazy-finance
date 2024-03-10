@@ -64,3 +64,8 @@ export async function saveFile(path: string, content: string): Promise<void> {
 export async function logout(): Promise<void> {
   await api.post("/logout");
 }
+
+export async function isSignedIn(): Promise<boolean> {
+  const response = await api.get("/is_signed_in");
+  return response.data;
+}

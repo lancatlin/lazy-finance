@@ -25,6 +25,18 @@ definitions:
       type:
         type: string
     type: object
+  main.User:
+    properties:
+      email:
+        type: string
+      isLogin:
+        type: boolean
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
   model.Account:
     properties:
       amount:
@@ -172,6 +184,73 @@ paths:
       summary: Upload File
       tags:
       - files
+  /signin:
+    post:
+      consumes:
+      - application/json
+      description: Sign in
+      parameters:
+      - description: User
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/main.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Sign in
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Sign up
+      parameters:
+      - description: User
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/main.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Sign up
+  /status:
+    get:
+      description: Get status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+      summary: Get status
   /templates:
     get:
       consumes:

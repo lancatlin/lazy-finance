@@ -13,6 +13,7 @@ func router() *gin.Engine {
 
 	// Error handling middleware
 	r.Use(errorHandler)
+	r.Use(session)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -21,8 +22,9 @@ func router() *gin.Engine {
 	api.POST("/signup", signup)
 	api.POST("/signin", signin)
 	api.POST("/logout", logout)
+	api.GET("/status", status)
 
-	authApi := api.Group("", authenticate)
+	authApi := api.Group("", authRequired)
 
 	authApi.GET("/templates", getTemplates)
 	authApi.POST("/txs", newTx)
@@ -32,7 +34,7 @@ func router() *gin.Engine {
 	authApi.GET("/files/*path", getFile)
 	authApi.POST("/files/*path", uploadFile)
 
-	authZone := r.Group("", authenticate)
+	authZone := r.Group("", session)
 
 	authZone.GET("/download", func(c *gin.Context) {
 		user := getUser(c)

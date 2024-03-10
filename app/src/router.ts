@@ -3,6 +3,7 @@ import Home from "./views/HomePage.vue";
 import Edit from "./views/EditPage.vue";
 import Transactions from "./views/TransactionPage.vue";
 import Balances from "./views/BalancePage.vue";
+import SignInPage from "./views/SignInPage.vue";
 
 const routes = [
   {
@@ -29,6 +30,11 @@ const routes = [
     path: "/balances",
     name: "Balances",
     component: Balances,
+  },
+  {
+    path: "/signin",
+    name: "SignIn",
+    component: SignInPage,
   },
 ];
 
