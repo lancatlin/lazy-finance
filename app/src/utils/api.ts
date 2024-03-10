@@ -11,9 +11,14 @@ export async function getTemplates(): Promise<Template[]> {
   return response.data;
 }
 
-export async function newTx(data: Transaction): Promise<Transaction> {
+export async function newTx(
+  data: Transaction,
+  options: { save: boolean }
+): Promise<Transaction> {
   try {
-    const response = await api.post<Transaction>("/txs", data);
+    const response = await api.post<Transaction>("/txs", data, {
+      params: options,
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 400) {

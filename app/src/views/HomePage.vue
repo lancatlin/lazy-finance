@@ -10,6 +10,7 @@ const toast = useToast();
 
 const name = ref<string>("");
 const selectedTemplate = ref<Template>(defaultTemplate);
+const save = ref<boolean>(false);
 
 const templates = ref<Template[]>([]);
 
@@ -61,7 +62,7 @@ const onSubmit = async () => {
       selectedTemplate.value
     );
     console.log(result);
-    const tx = await newTx(result);
+    const tx = await newTx(result, { save: save.value });
     console.log("Submitted successfully");
     console.log(tx);
     toast.success(`Transaction "${tx.name}" created`);
@@ -197,6 +198,7 @@ const onSubmit = async () => {
           id="save"
           type="checkbox"
           class="w-5 h-5 mr-2 rounded focus:ring-blue-500"
+          v-model="save"
         />
         <label for="save" class="mr-2">Save as Template</label>
         <!-- Submit -->
