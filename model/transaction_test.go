@@ -3,6 +3,8 @@ package model
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenTransactionText(t *testing.T) {
@@ -30,8 +32,8 @@ func TestGenTransactionText(t *testing.T) {
 
 `
 	actualTx, err := transaction.Generate()
-	assertEqual(t, expectedTx, actualTx)
-	assertNil(t, err)
+	assert.NoError(t, err)
+	assert.Equal(t, expectedTx, actualTx)
 }
 
 func TestValidateTransaction(t *testing.T) {
@@ -56,13 +58,9 @@ func TestValidateTransaction(t *testing.T) {
 	for _, tx := range txs {
 		err := tx.tx.Validate()
 		if tx.expectedError == "" {
-			assertNil(t, err)
+			assert.NoError(t, err)
 		} else {
-			if err == nil {
-				t.Errorf("Expected [%s], got nil", tx.expectedError)
-			} else {
-				assertEqual(t, tx.expectedError, err.Error())
-			}
+			assert.ErrorContains(t, err, tx.expectedError)
 		}
 	}
 }
