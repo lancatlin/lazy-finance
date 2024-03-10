@@ -46,6 +46,8 @@ export async function getFileList(): Promise<File[]> {
 }
 
 export async function getFileContent(path: string): Promise<string> {
-  const response = await api.get<string>(`/files/${path}`);
+  const response = await api.get<string>(`/files/${path}`, {
+    responseType: "text",
+  });
   return response.data;
 }
