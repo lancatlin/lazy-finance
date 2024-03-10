@@ -56,7 +56,6 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const signedIn = await isSignedIn();
-  console.log("signedIn", signedIn);
   // Check if the route requires authentication
   if (to.meta.requiresAuth && !signedIn) {
     // Check if the user isn't authenticated

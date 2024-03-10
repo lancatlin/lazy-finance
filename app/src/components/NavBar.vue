@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { logout } from "../utils/api";
+import session from "../models/sessionStore";
 
 const menuOpen = ref(false);
 
@@ -58,12 +59,13 @@ async function onLogout() {
       :class="{
         hidden: !menuOpen,
       }"
+      v-if="session.signedIn"
     >
       <!-- Primary navigation links -->
       <router-link
         to="/"
         class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm"
-        :class="{ 'font-bold': path === '/' }"
+        :class="{ 'font-bold': path === '/dashboard' }"
         >Home</router-link
       >
       <router-link

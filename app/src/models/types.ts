@@ -48,7 +48,7 @@ export interface File {
   children?: File[];
 }
 
-export interface Status {
+export interface Session {
   signedIn: boolean;
 }
 

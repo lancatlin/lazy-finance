@@ -5,9 +5,10 @@ import {
   Transaction,
   Query,
   File,
-  Status,
+  Session,
   LoginRequest,
 } from "../models/types";
+import { emitSignIn, emitSignOut } from "../models/sessionStore";
 
 const api = axios.create({
   baseURL: "/api",
@@ -76,6 +77,7 @@ export async function saveFile(path: string, content: string): Promise<void> {
 export async function signIn(payload: LoginRequest): Promise<void> {
   try {
     await api.post("/signin", payload);
+    emitSignIn();
   } catch (err) {
     throw handleAuthError(err);
   }
@@ -84,6 +86,7 @@ export async function signIn(payload: LoginRequest): Promise<void> {
 export async function signUp(payload: LoginRequest): Promise<void> {
   try {
     await api.post("/signup", payload);
+    emitSignIn();
   } catch (err) {
     throw handleAuthError(err);
   }
@@ -98,9 +101,15 @@ function handleAuthError(err: unknown): any {
 
 export async function logout(): Promise<void> {
   await api.post("/logout");
+  emitSignOut();
 }
 
 export async function isSignedIn(): Promise<boolean> {
-  const response = await api.get<Status>("/status");
+  const response = await api.get<Session>("/status");
+  if (response.data.signedIn) {
+    emitSignIn();
+  } else {
+    emitSignOut();
+  }
   return response.data.signedIn;
 }
