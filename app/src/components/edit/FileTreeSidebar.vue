@@ -18,7 +18,7 @@ import FileTree from "./FileTree.vue";
 import { ref, PropType } from "vue";
 import { File } from "../../models/types";
 
-const sidebarOpen = ref(false);
+const sidebarOpen = ref(true);
 
 defineProps({
   files: {
