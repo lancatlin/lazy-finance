@@ -299,6 +299,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.Transaction"
                         }
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Save as template",
+                        "name": "save",
+                        "in": "query"
                     }
                 ],
                 "responses": {

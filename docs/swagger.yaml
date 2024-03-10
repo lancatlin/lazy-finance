@@ -238,6 +238,10 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/model.Transaction'
+      - description: Save as template
+        in: query
+        name: save
+        type: boolean
       produces:
       - application/json
       responses:

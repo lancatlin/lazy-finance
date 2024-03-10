@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lancatlin/lazy-finance/ledger"
@@ -32,23 +33,34 @@ func getTemplates(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        data  body      model.Transaction  true  "Transaction Data"
+// @Param        save  query     bool                false "Save as template"
 // @Success      200  {object}  string "Returns new transaction"
 // @Failure      400  {object}  Error  "Bad Request"
 // @Failure      500  {object}  Error  "Internal Server Error"
 // @Router       /txs [post]
 func newTx(c *gin.Context) {
-	var tx model.Transaction
-	if err := c.ShouldBind(&tx); err != nil {
+	var payload model.Transaction
+	if err := c.ShouldBind(&payload); err != nil {
 		c.AbortWithError(400, err)
 		return
 	}
 	user := getUser(c)
-	err := user.newTx(tx)
+	err := user.newTx(payload)
 	if err != nil {
 		c.AbortWithError(400, err)
 		return
 	}
-	c.JSON(200, tx)
+	save := c.Query("save")
+	log.Println(save)
+	if save == "true" {
+		template := model.FromTransaction(payload)
+		err := user.saveTemplate(template)
+		if err != nil {
+			c.AbortWithError(500, err)
+			return
+		}
+	}
+	c.JSON(200, payload)
 }
 
 // @Summary      Get Transactions

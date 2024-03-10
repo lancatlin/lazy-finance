@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -201,4 +202,22 @@ func (u *User) getBalances(query ledger.Query) (balances []ledger.Balance, err e
 		return nil, err
 	}
 	return ledger.LoadBalances(output)
+}
+
+func (u *User) saveTemplate(template model.Template) error {
+	templates, err := u.templates()
+	if err != nil {
+		return err
+	}
+	templates = append(templates, template)
+
+	return u.saveTemplates(templates)
+}
+
+func (u *User) saveTemplates(templates []model.Template) error {
+	data, err := json.Marshal(templates)
+	if err != nil {
+		return err
+	}
+	return u.overwriteFile("templates.json", string(data))
 }
