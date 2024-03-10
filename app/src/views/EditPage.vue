@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { File } from "../models/types";
 import FileTreeSidebar from "../components/edit/FileTreeSidebar.vue";
 import EditForm from "../components/edit/EditForm.vue";
+import { getFileList } from "../utils/api";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const filePath = computed(() => route.params.path as string);
 
 const files = ref<File[]>([
   {
@@ -28,10 +33,15 @@ const files = ref<File[]>([
     type: "file",
   },
 ]);
+
+onMounted(async () => {
+  const fileList = await getFileList();
+  files.value = fileList;
+});
 </script>
 <template>
   <div class="relative md:flex md:flex-row h-full">
     <FileTreeSidebar :files="files" />
-    <EditForm />
+    <EditForm :filePath="filePath" />
   </div>
 </template>

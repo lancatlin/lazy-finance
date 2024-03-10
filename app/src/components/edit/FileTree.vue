@@ -1,12 +1,11 @@
 <template>
   <ul class="file-tree">
     <li v-for="(node, index) in nodes" :key="index">
-      <div v-if="node.type === 'folder'">
+      <RouterLink :to="`/edit/${node.name}`">
         <span>{{ node.name }}</span>
+      </RouterLink>
+      <div v-if="node.children">
         <FileTree :nodes="node.children" />
-      </div>
-      <div v-else>
-        <span>{{ node.name }}</span>
       </div>
     </li>
   </ul>
@@ -14,10 +13,10 @@
 
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { Folder, File } from "../../models/types";
+import { File } from "../../models/types";
 
 defineProps<{
-  nodes: (Folder | File)[];
+  nodes: File[];
 }>();
 </script>
 

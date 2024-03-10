@@ -1,8 +1,25 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { getFileContent } from "../../utils/api";
 
 const code = ref(`console.log('Hello, world!')`);
 defineEmits({});
+
+const props = defineProps({
+  filePath: {
+    type: String,
+    required: true,
+  },
+});
+
+watch(
+  () => props.filePath,
+  async (newPath, oldPath) => {
+    if (newPath === oldPath) return;
+    code.value = await getFileContent(newPath);
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <div class="w-full h-full p-2">

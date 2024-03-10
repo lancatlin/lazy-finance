@@ -12,7 +12,12 @@ const routes = [
   },
   {
     path: "/edit",
-    name: "Edit",
+    name: "EditHome",
+    component: Edit,
+  },
+  {
+    path: "/edit/:path",
+    name: "EditWithPath",
     component: Edit,
   },
   {
