@@ -1,51 +1,78 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from "vue";
+
+const menuOpen = ref(false);
+
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value;
+};
+</script>
 <template>
-  <nav class="bg-white shadow">
-    <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
-      <div class="relative flex items-center justify-between h-16">
-        <div
-          class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start"
+  <nav
+    class="relative bg-white shadow p-3 flex flex-row flex-wrap items-center justify-between sm:justify-start"
+  >
+    <router-link to="/">
+      <h1 class="text-xl">Lazy 累記</h1>
+    </router-link>
+    <!-- Mobile menu button-->
+    <div class="block sm:hidden">
+      <button
+        type="button"
+        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        @click="toggleMenu"
+      >
+        <span class="sr-only">Open main menu</span>
+        <!-- Icon when menu is closed. -->
+        <svg
+          class="block h-6 w-6"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
         >
-          <div class="flex-shrink-0 flex items-center">
-            <router-link to="/">
-              <h1 class="text-xl items-center">Lazy 累記</h1>
-            </router-link>
-            <!-- <img
-              class="block lg:hidden h-8 w-auto"
-              src="/img/logo.svg"
-              alt="logo"
-            /> -->
-          </div>
-          <div class="hidden sm:block sm:ml-6">
-            <div class="flex space-x-4">
-              <router-link
-                to="/"
-                class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                active-class="text-gray-900"
-                >Home</router-link
-              >
-              <router-link
-                to="/edit"
-                class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                active-class="text-gray-900"
-                >Edit</router-link
-              >
-              <router-link
-                to="/transactions"
-                class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                active-class="text-gray-900"
-                >Transactions</router-link
-              >
-              <router-link
-                to="/balances"
-                class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                active-class="text-gray-900"
-                >Balances</router-link
-              >
-            </div>
-          </div>
-        </div>
-      </div>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16m-7 6h7"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="w-full flex flex-col items-center sm:w-auto sm:flex-row sm:block sm:ml-6 bg-white"
+      :class="{
+        hidden: !menuOpen,
+      }"
+    >
+      <!-- Primary navigation links -->
+      <router-link
+        to="/"
+        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+        active-class="text-gray-900"
+        >Home</router-link
+      >
+      <router-link
+        to="/edit"
+        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+        active-class="text-gray-900"
+        >Edit</router-link
+      >
+      <router-link
+        to="/transactions"
+        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+        active-class="text-gray-900"
+        >Transactions</router-link
+      >
+      <router-link
+        to="/balances"
+        class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+        active-class="text-gray-900"
+        >Balances</router-link
+      >
     </div>
   </nav>
 </template>
