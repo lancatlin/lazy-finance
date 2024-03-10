@@ -61,8 +61,8 @@ const onSubmit = async () => {
       selectedTemplate.value
     );
     console.log(result);
-    console.log("Submitted successfully");
     const tx = await newTx(result);
+    console.log("Submitted successfully");
     console.log(tx);
     toast.success(`Transaction "${tx.name}" created`);
     clearForm();
@@ -103,6 +103,7 @@ const onSubmit = async () => {
           v-model="name"
           type="text"
           id="name"
+          :placeholder="selectedTemplate.name"
           class="shadow bg-gray-50 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:shadow-outline"
         />
       </div>
