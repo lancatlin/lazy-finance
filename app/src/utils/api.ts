@@ -51,3 +51,7 @@ export async function getFileContent(path: string): Promise<string> {
   });
   return response.data;
 }
+
+export async function saveFile(path: string, content: string): Promise<void> {
+  await api.post(`/files/${path}`, { data: content });
+}

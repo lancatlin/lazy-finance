@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { getFileContent } from "../../utils/api";
+import { getFileContent, saveFile } from "../../utils/api";
 import { useToast } from "vue-toast-notification";
 
 const toast = useToast();
@@ -25,8 +25,13 @@ watch(
 );
 
 async function reset() {
-  code.value = await getFileContent(props.filePath);
-  fileChanged.value = false;
+  try {
+    code.value = await getFileContent(props.filePath);
+    fileChanged.value = false;
+  } catch (err) {
+    toast.error("Failed to open file");
+    console.error(err);
+  }
 }
 
 function onChange() {
@@ -34,8 +39,14 @@ function onChange() {
 }
 
 async function save() {
-  toast.success("File saved!");
-  fileChanged.value = false;
+  try {
+    await saveFile(props.filePath, code.value);
+    toast.success("File saved!");
+    fileChanged.value = false;
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to save file");
+  }
 }
 </script>
 <template>
