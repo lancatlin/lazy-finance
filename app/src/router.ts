@@ -4,6 +4,7 @@ import Edit from "./views/EditPage.vue";
 import Transactions from "./views/TransactionPage.vue";
 import Balances from "./views/BalancePage.vue";
 import SignInPage from "./views/SignInPage.vue";
+import SignUpPage from "./views/SignUpPage.vue";
 import { isSignedIn } from "./utils/api";
 
 const routes = [
@@ -45,6 +46,12 @@ const routes = [
     path: "/signin",
     name: "SignIn",
     component: SignInPage,
+    meta: { requiresGuest: true },
+  },
+  {
+    path: "/signup",
+    name: "SignUp",
+    component: SignUpPage,
     meta: { requiresGuest: true },
   },
 ];

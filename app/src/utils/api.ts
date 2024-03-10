@@ -93,8 +93,13 @@ export async function signUp(payload: LoginRequest): Promise<void> {
 }
 
 function handleAuthError(err: unknown): any {
-  if (axios.isAxiosError(err) && err.response?.status === 401) {
-    return new Error("Invalid email or password");
+  if (axios.isAxiosError(err)) {
+    if (err.response?.status === 401) {
+      return new Error("Invalid email or password");
+    }
+    if (err.response?.status === 400) {
+      return new Error(err.response.data.message);
+    }
   }
   return err;
 }
