@@ -11,7 +11,6 @@ import (
 
 	"github.com/lancatlin/lazy-finance/ledger"
 	"github.com/lancatlin/lazy-finance/model"
-	cp "github.com/otiai10/copy"
 )
 
 type User struct {
@@ -26,7 +25,43 @@ func (u *User) Dir() string {
 }
 
 func (u *User) Mkdir() error {
-	return cp.Copy(ARCHETYPES_DIR, u.Dir())
+	err := os.Mkdir(u.Dir(), 0755)
+	if err != nil {
+		return fmt.Errorf("failed to create user directory: %w", err)
+	}
+	files, err := os.ReadDir(ARCHETYPES_DIR)
+	if err != nil {
+		return fmt.Errorf("failed to read archetypes directory: %w", err)
+	}
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		err := u.copyArchetypeFile(file.Name())
+		if err != nil {
+			return fmt.Errorf("failed to copy archetype file: %w", err)
+		}
+	}
+	return nil
+}
+
+func (u *User) copyArchetypeFile(file string) error {
+	src, err := os.OpenFile(path.Join(ARCHETYPES_DIR, file), os.O_RDONLY, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to open archetype file: %w", err)
+	}
+	defer src.Close()
+
+	dest, err := u.WriteFile(file)
+	if err != nil {
+		return fmt.Errorf("failed to open destination file: %w", err)
+	}
+
+	_, err = io.Copy(dest, src)
+	if err != nil {
+		return fmt.Errorf("failed to copy file: %w", err)
+	}
+	return dest.Close()
 }
 
 func (u *User) FilePath(name string) string {

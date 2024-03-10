@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -46,17 +47,24 @@ func getUser(c *gin.Context) User {
 func signup(c *gin.Context) {
 	var user User
 	if err := c.ShouldBind(&user); err != nil {
-		c.AbortWithError(400, err)
+		c.AbortWithError(400, fmt.Errorf("invalid request: %w", err))
 		return
 	}
 	if err := store.Register(user.Email, user.Password); err != nil {
-		c.AbortWithError(400, err)
+		c.AbortWithError(400, fmt.Errorf("failed to register: %w", err))
 		return
 	}
 	if err := user.Mkdir(); err != nil {
+		c.AbortWithError(500, err)
 		return
 	}
-	signin(c)
+	token, err := store.Login(user.Email, user.Password)
+	if err != nil {
+		c.AbortWithError(401, fmt.Errorf("failed to login: %w", err))
+		return
+	}
+	c.SetCookie("session", token, 60*60*24*7, "", "", false, true)
+	c.Status(200)
 }
 
 // @Summary Sign in
@@ -71,12 +79,12 @@ func signup(c *gin.Context) {
 func signin(c *gin.Context) {
 	var user User
 	if err := c.ShouldBind(&user); err != nil {
-		c.AbortWithError(400, err)
+		c.AbortWithError(400, fmt.Errorf("invalid request: %w", err))
 		return
 	}
 	token, err := store.Login(user.Email, user.Password)
 	if err != nil {
-		c.AbortWithError(401, err)
+		c.AbortWithError(401, fmt.Errorf("failed to login: %w", err))
 		return
 	}
 	c.SetCookie("session", token, 60*60*24*7, "", "", false, true)

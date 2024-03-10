@@ -112,15 +112,14 @@ func (s *Htpasswd) write() (err error) {
 	if err != nil {
 		return fmt.Errorf("failed to open htpasswd file: %w", err)
 	}
-	defer file.Close()
 
 	for u, p := range s.accounts {
 		_, err = fmt.Fprintf(file, "%s:%s\n", u, p)
 		if err != nil {
-			return err
+			panic(err)
 		}
 	}
-	return nil
+	return file.Close()
 }
 
 func hash(pass string) (string, error) {

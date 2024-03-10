@@ -2,7 +2,7 @@ package auth
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -23,7 +23,7 @@ func TestHtpasswdSuccess(t *testing.T) {
 		pass:   "password",
 		hashed: "$2a$14$SQSscaF4fVO3e5dp2/.VPuVQDPKqxSagLQnN6OncTRtoQw0ie9ByK",
 	}
-	err := ioutil.WriteFile(path,
+	err := os.WriteFile(path,
 		[]byte(fmt.Sprintf("%s:%s", user1.user, user1.hashed)), 0640)
 	if err != nil {
 		t.Fatal(err)
@@ -53,7 +53,7 @@ func TestHtpasswdSuccess(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Error(err)
 	}
@@ -67,7 +67,7 @@ func TestHtpasswdSuccess(t *testing.T) {
 		t.Error(err)
 	}
 
-	data, err = ioutil.ReadFile(path)
+	data, err = os.ReadFile(path)
 	if err != nil {
 		t.Error(err)
 	}

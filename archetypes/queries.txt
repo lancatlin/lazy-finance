@@ -1,5 +1,0 @@
-資產餘額:b assets
-本月開支:b -b "this month"
-上月開支:b -b "last month" -e "this month"
-記錄列表:r
-過去七天:r -b "last 7 days"
